@@ -42,7 +42,9 @@ For this project there needed to be a case to protect the PCB from the outside w
 ![Open_case](Assets/Open_case.png)
 ![Full_case](Assets/Full_case.png)
 
-
+<details>
+  <summary>BOM</summary>
+  
 # BOM
 | Id | Designator | Footprint | Quantity | Designation | Supplier and ref | Column1 | Needed quantity | - | LCSC | MOUSER | Already in another pcb | Enough? | Mrf# | Mfr. | Order Qty. | Unit Price(USD) | Ext.Price(USD) | LCSC#/MOUSER | Package | Min | Mult | SPQ | Availability | Stock Status | Customer Notes | Description | Matched status | Product Link |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
