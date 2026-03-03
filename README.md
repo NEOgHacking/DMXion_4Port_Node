@@ -21,6 +21,9 @@ I started on making this DMX network node for a few reasons. First i was using a
 The design process was a heck of a ride, at first i started with the simple DMX part but then got to the ethernet. I really wanted PoE so started with the ride. It was a heck of a long ride, i think it took up 1/3 of the projects time its really complex. Also the most complex schematic from the whole project. The rest went pretty smooth. I had recently done another big project my 3D Printer mainboard and learned allot from that! So the rest was pretty straight forward, always some small chip changes here and there but apart from that it went well. The case design also went quick didn't have to high of standards for that but still wanted it to look good. After a whole day that was done. 
 I used KiCad for PCB design, Onshape for 3D design and VScode for Firmware.
 
+# Use
+To use this product first get the firmware uploaded via the arduino IDE or PlatformIO Then just plug it into a ethernet setup and plug in your DMX devices. Thats it! Its that simple! For config use the display with the rotating knob to select universes, ethernet settings, ext.
+
 # Schematic
 This is a very long schematic. You can find the whole schematics in .PDF format in the individual PCB design folders. But here are some important ones.
 First the main schematic of the main PCB.
