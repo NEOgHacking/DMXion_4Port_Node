@@ -1,0 +1,76 @@
+##############
+# if anchors #
+##############
+.if-protected: &if-protected
+  if: '($CI_COMMIT_REF_NAME == "master" || $CI_COMMIT_BRANCH =~ /^release\/v/ || $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+(\.\d+)?($|-)/)'
+
+.if-protected-or-web-trigger: &if-protected-or-web-trigger
+  if: '($CI_COMMIT_REF_NAME == "master" || $CI_COMMIT_BRANCH =~ /^release\/v/ || $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+(\.\d+)?($|-)/ || $CI_PIPELINE_SOURCE == "web")'
+
+.if-dev-push: &if-dev-push
+  if: '$CI_COMMIT_REF_NAME != "master" && $CI_COMMIT_BRANCH !~ /^release\/v/ && $CI_COMMIT_TAG !~ /^v\d+\.\d+\.\d+(\.\d+)?($|-)/ && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_PIPELINE_SOURCE == "web")'
+
+############
+# Patterns #
+############
+.patterns-docs: &patterns-docs
+  - "docs/**/*"
+  - "components/at/include/*"
+  - ".gitlab/ci/build_docs.yml"
+  - ".gitlab/ci/deploy.yml"
+  - ".gitlab/ci/post_deploy.yml"
+
+.patterns-src: &patterns-src
+  - "bootloader_components/**/*"
+  - "components/**/*"
+  - "main/**/*"
+  - "module_config/**/*"
+  - "tools/**/*"
+  - ".gitlab/**/*"
+  - "patches/**/*"
+  - ".gitlab-ci.yml"
+  - "build.py"
+  - "CMakeLists.txt"
+  - "requirements.txt"
+
+.patterns-examples: &patterns-examples
+  - "examples/**/*"
+  - "module_config/**/IDF_VERSION"
+
+#########
+# Rules #
+#########
+.rules:protected:
+  rules:
+    - <<: *if-protected
+
+.rules:build:build_doc:
+  rules:
+    - <<: *if-protected
+    - <<: *if-dev-push
+      changes: *patterns-docs
+
+.rules:build:build_project:
+  rules:
+    - <<: *if-protected-or-web-trigger
+    - <<: *if-dev-push
+      changes: *patterns-src
+
+.rules:build:build_examples:
+  rules:
+    - <<: *if-protected-or-web-trigger
+    - <<: *if-dev-push
+      changes: *patterns-examples
+
+.rules:build:build_project_on_protected:
+  rules:
+    - <<: *if-protected-or-web-trigger
+
+.rules:deploy:docs_preview:
+  rules:
+    - <<: *if-dev-push
+      changes: *patterns-docs
+
+.rules:deploy:docs_production:
+  rules:
+    - <<: *if-protected

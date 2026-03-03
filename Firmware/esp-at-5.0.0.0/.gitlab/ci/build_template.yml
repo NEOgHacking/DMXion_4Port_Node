@@ -1,0 +1,398 @@
+# Build template for ESP-AT project
+
+#########################
+# common build template #
+#########################
+.speedup_repo_clone: &speedup_repo_clone
+  - get_module_configs
+  - sed -i "s?https://github.com?$GITLAB_SSH_SERVER?g" ${module_cfg_dir}/IDF_VERSION
+
+.setup_env_variables: &setup_env_variables
+  - export HAS_IDF_PREREQUISITES=1
+  - export ESP_AT_PROJECT_BRANCH=${CI_COMMIT_REF_NAME}
+  - export ESP_AT_FIRMWARE_FROM=${AT_FIRMWARE_FROM}
+
+.clone_repo_and_components: &clone_repo_and_components
+  - *speedup_repo_clone
+  - mkdir build
+  - 'echo -e "{\"platform\": \"${PLATFORM}\", \"module\": \"${MODULE_NAME}\", \"silence\": ${SILENCE}}" > module_info.json'
+  - cp module_info.json build/module_info.json
+  - ./build.py install
+
+.install_compilation_env: &install_compilation_env
+  - source esp-idf/tools/ci/utils.sh
+  - source esp-idf/tools/ci/configure_ci_environment.sh
+  - esp-idf/tools/idf_tools.py install
+  - esp-idf/tools/idf_tools.py export
+  - source esp-idf/export.sh
+
+.build_project: &build_project
+  - rm -rf build && mkdir build
+  - cp module_info.json build/module_info.json
+  - ./build.py build
+
+.build_template:
+  stage: build
+  image: $CI_DOCKER_REGISTRY/esp-env-v5.4:1
+  needs: []
+  tags:
+    - esp-at
+  artifacts:
+    name: esp-at-artifacts
+    paths:
+      - sdkconfig
+      - build/*.bin
+      - build/*.elf
+      - build/*.map
+      - build/bootloader/*.bin
+      - build/partition_table/*.bin
+      - build/customized_partitions/*
+      - build/flasher_args.json
+      - build/project_description.json
+      - build/download.config
+      - build/factory/*
+      - build/custom_ota_binaries/*
+    expire_in: 6 mos
+  script:
+    - *setup_env_variables
+    - *clone_repo_and_components
+    - *install_compilation_env
+    - *build_project
+
+#####################
+# Set up OTA tokens #
+#####################
+.setup_tokens_esp32: &setup_tokens_esp32
+  - cd components/at/private_include
+  - rm -f at_ota_token.h
+  - echo -e "#pragma once" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_WROOM32 \"$AT_OTA_TOKEN_WROOM32\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_WROOM32 \"$AT_OTA_TOKEN_WROOM32\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_WROVER32 \"$AT_OTA_TOKEN_WROVER32\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_WROVER32 \"$AT_OTA_TOKEN_WROVER32\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_ESP32_PICO_D4 \"$AT_OTA_TOKEN_ESP32_PICO_D4\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_ESP32_PICO_D4 \"$AT_OTA_TOKEN_ESP32_PICO_D4\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_ESP32_SOLO_1 \"$AT_OTA_TOKEN_ESP32_SOLO_1\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_ESP32_SOLO_1 \"$AT_OTA_TOKEN_ESP32_SOLO_1\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_ESP32_MINI_1 \"$AT_OTA_TOKEN_ESP32_MINI_1\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_ESP32_MINI_1 \"$AT_OTA_TOKEN_ESP32_MINI_1\"" >> at_ota_token.h
+  - cd -
+
+.setup_tokens_esp32c2: &setup_tokens_esp32c2
+  - cd components/at/private_include
+  - rm -f at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_ESP32C2_2MB \"$AT_OTA_TOKEN_ESP32C2_2MB\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_ESP32C2_2MB \"$AT_OTA_TOKEN_ESP32C2_2MB\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_ESP32C2_4MB \"$AT_OTA_TOKEN_ESP32C2_4MB\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_ESP32C2_4MB \"$AT_OTA_TOKEN_ESP32C2_4MB\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_ESP32C2_2MB_G2 \"$AT_OTA_TOKEN_ESP32C2_2MB_G2\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_ESP32C2_2MB_G2 \"$AT_OTA_TOKEN_ESP32C2_2MB_G2\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_ESP32C2_4MB_G2 \"$AT_OTA_TOKEN_ESP32C2_4MB_G2\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_ESP32C2_4MB_G2 \"$AT_OTA_TOKEN_ESP32C2_4MB_G2\"" >> at_ota_token.h
+  - cd -
+
+.setup_tokens_esp32c3: &setup_tokens_esp32c3
+  - cd components/at/private_include
+  - rm -f at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_ESP32C3_MINI \"$AT_OTA_TOKEN_ESP32C3_MINI\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_ESP32C3_MINI \"$AT_OTA_TOKEN_ESP32C3_MINI\"" >> at_ota_token.h
+  - cd -
+
+.setup_tokens_esp32c5: &setup_tokens_esp32c5
+  - cd components/at/private_include
+  - rm -f at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_ESP32C5_4MB \"$AT_OTA_TOKEN_ESP32C5_4MB\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_ESP32C5_4MB \"$AT_OTA_TOKEN_ESP32C5_4MB\"" >> at_ota_token.h
+  - cd -
+
+.setup_tokens_esp32c6: &setup_tokens_esp32c6
+  - cd components/at/private_include
+  - rm -f at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_ESP32C6_4MB \"$AT_OTA_TOKEN_ESP32C6_4MB\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_ESP32C6_4MB \"$AT_OTA_TOKEN_ESP32C6_4MB\"" >> at_ota_token.h
+  - cd -
+
+.setup_tokens_esp32c61: &setup_tokens_esp32c61
+  - cd components/at/private_include
+  - rm -f at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_ESP32C61_4MB \"$AT_OTA_TOKEN_ESP32C61_4MB\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_ESP32C61_4MB \"$AT_OTA_TOKEN_ESP32C61_4MB\"" >> at_ota_token.h
+  - cd -
+
+.setup_tokens_esp32s2: &setup_tokens_esp32s2
+  - cd components/at/private_include
+  - rm -f at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_ESP32S2_WROOM \"$AT_OTA_TOKEN_ESP32S2_WROOM\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_ESP32S2_WROOM \"$AT_OTA_TOKEN_ESP32S2_WROOM\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_ESP32S2_WROVER \"$AT_OTA_TOKEN_ESP32S2_WROVER\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_ESP32S2_WROVER \"$AT_OTA_TOKEN_ESP32S2_WROVER\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_ESP32S2_SOLO \"$AT_OTA_TOKEN_ESP32S2_SOLO\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_ESP32S2_SOLO \"$AT_OTA_TOKEN_ESP32S2_SOLO\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_TOKEN_ESP32S2_MINI \"$AT_OTA_TOKEN_ESP32S2_MINI\"" >> at_ota_token.h
+  - echo -e "#define CONFIG_ESP_AT_OTA_SSL_TOKEN_ESP32S2_MINI \"$AT_OTA_TOKEN_ESP32S2_MINI\"" >> at_ota_token.h
+  - cd -
+
+#############################
+# Update sdkconfig.defaults #
+#############################
+.enable_all_wifi_cmds: &enable_all_wifi_cmds
+  - echo -e "CONFIG_AT_WS_COMMAND_SUPPORT=y" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_FS_COMMAND_SUPPORT=y" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_DRIVER_COMMAND_SUPPORT=y" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_EAP_COMMAND_SUPPORT=y" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_WEB_SERVER_SUPPORT=y" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_WEB_CAPTIVE_PORTAL_ENABLE=y" >> ${at_sdkconfig_file}
+
+.disable_all_wifi_cmds: &disable_all_wifi_cmds
+  - echo -e "CONFIG_AT_WS_COMMAND_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_FS_COMMAND_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_ETHERNET_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_EAP_COMMAND_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_DRIVER_COMMAND_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_WEB_SERVER_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_WEB_CAPTIVE_PORTAL_ENABLE=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_OTA_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_MDNS_COMMAND_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_WPS_COMMAND_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_SMARTCONFIG_COMMAND_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_PING_COMMAND_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_MQTT_COMMAND_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_HTTP_COMMAND_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_SIGNALING_COMMAND_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_ESP_WIFI_SLP_IRAM_OPT=n" >> ${at_sdkconfig_file}
+
+.enable_ethernet_cmds: &enable_ethernet_cmds
+  - echo -e "CONFIG_AT_ETHERNET_SUPPORT=y" >> ${at_sdkconfig_file}
+
+.enable_fs_cmds: &enable_fs_cmds
+  - echo -e "CONFIG_AT_FS_COMMAND_SUPPORT=y" >> ${at_sdkconfig_file}
+
+.enable_intf_security: &enable_intf_security
+  - echo -e "CONFIG_AT_INTF_SECURITY_SUPPORT=y" >> ${at_sdkconfig_file}
+
+.enable_bt_cmds: &enable_bt_cmds
+  - echo -e "CONFIG_AT_BT_COMMAND_SUPPORT=y" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_BT_SPP_COMMAND_SUPPORT=y" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_BT_A2DP_COMMAND_SUPPORT=y" >> ${at_sdkconfig_file}
+
+.enable_ble_cmds: &enable_ble_cmds
+  - echo -e "CONFIG_AT_BLE_COMMAND_SUPPORT=y" >> ${at_sdkconfig_file}
+
+.disable_ble_cmds: &disable_ble_cmds
+  - echo -e "CONFIG_AT_BLE_COMMAND_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_BLE_HID_COMMAND_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_BLUFI_COMMAND_SUPPORT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_BT_COMMAND_SUPPORT=n" >> ${at_sdkconfig_file}
+
+.enable_40mhz_xtal: &enable_40mhz_xtal
+  - echo -e "CONFIG_XTAL_FREQ_40=y" >> ${at_sdkconfig_file}
+
+.enable_at_debugs: &enable_at_debugs
+  - echo -e "CONFIG_LOG_DEFAULT_LEVEL_INFO=y" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_DEBUG=y" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_AT_NET_DEBUG=y" >> ${at_sdkconfig_file}
+
+.disable_wifi_iram_opt: &disable_wifi_iram_opt
+  - echo -e "CONFIG_ESP_WIFI_IRAM_OPT=n" >> ${at_sdkconfig_file}
+  - echo -e "CONFIG_ESP_WIFI_RX_IRAM_OPT=n" >> ${at_sdkconfig_file}
+
+#########################
+# Enlarge app partition #
+#########################
+.enlarge_app_partition: &enlarge_app_partition
+  - app0_size=`cat ${module_cfg_dir}/partitions_at.csv | grep ota_0 | awk -F, '{print $5}'`
+  - app1_size=`cat ${module_cfg_dir}/partitions_at.csv | grep ota_1 | awk -F, '{print $5}'`
+  - to_set_size=$((app0_size + app1_size))
+  - sed -i '/ota_1/d' ${module_cfg_dir}/partitions_at.csv
+  - to_set_hex_size=`printf "0x%x" ${to_set_size}`
+  - sed -i '/ota_0/s,'"$app0_size"','"$to_set_hex_size"',g' ${module_cfg_dir}/partitions_at.csv
+
+##################
+# Before scripts #
+##################
+.before_script_esp32:
+  before_script:
+    - source ${CI_PROJECT_DIR}/.gitlab/ci/utils.sh
+    - add_gitlab_ssh_keys
+    - *setup_tokens_esp32
+
+.before_script_esp32c2:
+  before_script:
+    - source ${CI_PROJECT_DIR}/.gitlab/ci/utils.sh
+    - add_gitlab_ssh_keys
+    - *setup_tokens_esp32c2
+
+.before_script_esp32c3:
+  before_script:
+    - source ${CI_PROJECT_DIR}/.gitlab/ci/utils.sh
+    - add_gitlab_ssh_keys
+    - *setup_tokens_esp32c3
+
+.before_script_esp32c5:
+  before_script:
+    - source ${CI_PROJECT_DIR}/.gitlab/ci/utils.sh
+    - add_gitlab_ssh_keys
+    - *setup_tokens_esp32c5
+
+.before_script_esp32c6:
+  before_script:
+    - source ${CI_PROJECT_DIR}/.gitlab/ci/utils.sh
+    - add_gitlab_ssh_keys
+    - *setup_tokens_esp32c6
+
+.before_script_esp32c61:
+  before_script:
+    - source ${CI_PROJECT_DIR}/.gitlab/ci/utils.sh
+    - add_gitlab_ssh_keys
+    - *setup_tokens_esp32c61
+
+.before_script_esp32s2:
+  before_script:
+    - source ${CI_PROJECT_DIR}/.gitlab/ci/utils.sh
+    - add_gitlab_ssh_keys
+    - *setup_tokens_esp32s2
+
+.before_script_enable_at_debugs:
+  before_script:
+    - source ${CI_PROJECT_DIR}/.gitlab/ci/utils.sh
+    - add_gitlab_ssh_keys
+    - get_module_configs
+    - *enable_at_debugs
+    - *disable_wifi_iram_opt
+    - *enlarge_app_partition
+
+.before_script_enable_all_wifi_cmds:
+  before_script:
+    - source ${CI_PROJECT_DIR}/.gitlab/ci/utils.sh
+    - add_gitlab_ssh_keys
+    - get_module_configs
+    - *enable_all_wifi_cmds
+    - *disable_ble_cmds
+    - *enlarge_app_partition
+
+.before_script_enable_ble_cmds:
+  before_script:
+    - source ${CI_PROJECT_DIR}/.gitlab/ci/utils.sh
+    - add_gitlab_ssh_keys
+    - get_module_configs
+    - *enable_ble_cmds
+
+.before_script_esp32_enable_all_bt_cmds:
+  before_script:
+    - source ${CI_PROJECT_DIR}/.gitlab/ci/utils.sh
+    - add_gitlab_ssh_keys
+    - get_module_configs
+    - *setup_tokens_esp32
+    - *enable_bt_cmds
+    - *disable_all_wifi_cmds
+    - *enlarge_app_partition
+
+.before_script_esp32_enable_ethernet_cmds:
+  before_script:
+    - source ${CI_PROJECT_DIR}/.gitlab/ci/utils.sh
+    - add_gitlab_ssh_keys
+    - get_module_configs
+    - *setup_tokens_esp32
+    - *enable_ethernet_cmds
+    - *enlarge_app_partition
+
+.before_script_esp32c2_enable_40mhz_xtal:
+  before_script:
+    - source ${CI_PROJECT_DIR}/.gitlab/ci/utils.sh
+    - add_gitlab_ssh_keys
+    - get_module_configs
+    - *setup_tokens_esp32c2
+    - *enable_40mhz_xtal
+
+#####################
+# Build at examples #
+#####################
+.build_esp32_examples: &build_esp32_examples
+  - cd examples/at_sdio_host/ESP32
+  - idf.py build
+  - cd -
+
+  - cd examples/at_spi_master/sdspi/ESP32
+  - idf.py build
+  - cd -
+
+.build_common_examples: &build_common_examples
+  - *enable_fs_cmds
+  - *enable_intf_security
+  - export AT_CUSTOM_COMPONENTS="
+      $CI_PROJECT_DIR/examples/at_custom_cmd
+      $CI_PROJECT_DIR/examples/at_fatfs_to_http_server
+      $CI_PROJECT_DIR/examples/at_http_get_to_fatfs
+      $CI_PROJECT_DIR/examples/at_interface_security
+      "
+  - *build_project
+
+##################
+# Build template #
+##################
+.build_example_template_esp32:
+  script:
+    - *setup_env_variables
+    - *clone_repo_and_components
+    - *install_compilation_env
+    - *build_esp32_examples
+    - *build_common_examples
+  artifacts: {}
+
+.build_template_esp32:
+  extends:
+    - .build_template
+    - .before_script_esp32
+  variables:
+    PLATFORM: "PLATFORM_ESP32"
+    SILENCE: "1"
+
+.build_template_esp32c2:
+  extends:
+    - .build_template
+    - .before_script_esp32c2
+  variables:
+    PLATFORM: "PLATFORM_ESP32C2"
+    SILENCE: "0"
+
+.build_template_esp32c3:
+  extends:
+    - .build_template
+    - .before_script_esp32c3
+  variables:
+    PLATFORM: "PLATFORM_ESP32C3"
+    SILENCE: "0"
+
+.build_template_esp32c5:
+  extends:
+    - .build_template
+    - .before_script_esp32c5
+  image: $CI_DOCKER_REGISTRY/esp-env-v5.5:2
+  variables:
+    PLATFORM: "PLATFORM_ESP32C5"
+    SILENCE: "0"
+
+.build_template_esp32c6:
+  extends:
+    - .build_template
+    - .before_script_esp32c6
+  variables:
+    PLATFORM: "PLATFORM_ESP32C6"
+    SILENCE: "0"
+
+.build_template_esp32c61:
+  extends:
+    - .build_template
+    - .before_script_esp32c61
+  image: $CI_DOCKER_REGISTRY/esp-env-v5.5:2
+  variables:
+    PLATFORM: "PLATFORM_ESP32C61"
+    SILENCE: "0"
+
+.build_template_esp32s2:
+  extends:
+    - .build_template
+    - .before_script_esp32s2
+  variables:
+    PLATFORM: "PLATFORM_ESP32S2"
+    SILENCE: "0"

@@ -1,0 +1,20 @@
+:orphan:
+
+Page not Found
+==============
+:link_to_translation:`zh_CN:[中文]`
+
+.. note::
+
+    The page you requested could not be found after switching the chip target. We will redirect you to the parent directory.
+
+    .. only:: html
+
+        .. raw:: html
+            :file: ../_static/document_referrer.html
+
+
+.. figure:: ../_static/404-page__en.svg
+    :align: center
+    :alt: We're sorry. The page you requested could not be found.
+    :figclass: align-center

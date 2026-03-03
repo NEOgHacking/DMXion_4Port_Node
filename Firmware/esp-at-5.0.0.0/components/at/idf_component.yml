@@ -1,0 +1,10 @@
+## IDF Component Manager Manifest File
+dependencies:
+  espressif/mdns:
+    version: "~1.4.2"
+  espressif/esp_websocket_client:
+    version: "~1.2.0"
+  espressif/bootloader_support_plus:
+    version: "~0.4.0"
+    rules:
+      - if: "target in [esp32c2, esp32c3, esp32c5, esp32c61]"

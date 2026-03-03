@@ -1,0 +1,12 @@
+# Override default configurations
+
+# Override System Partition Table
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions_at.csv"
+CONFIG_PARTITION_TABLE_FILENAME="partitions_at.csv"
+
+# Override User Partition Table
+CONFIG_AT_CUSTOMIZED_PARTITION_TABLE_FILE="at_customize.csv"
+
+# Enable WebSocket and disable mDNS
+CONFIG_AT_WS_COMMAND_SUPPORT=y
+CONFIG_AT_MDNS_COMMAND_SUPPORT=n

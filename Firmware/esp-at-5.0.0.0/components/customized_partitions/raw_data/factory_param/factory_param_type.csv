@@ -1,0 +1,22 @@
+# version information
+version,data,i8
+
+# module information
+module_name,data,string
+
+# Wi-Fi configurations
+max_tx_power,data,i8
+country_code,data,string
+start_channel,data,u8
+channel_num,data,u8
+
+# UART configurations
+uart_port,data,i8
+uart_baudrate,data,i32
+uart_tx_pin,data,i32
+uart_rx_pin,data,i32
+uart_cts_pin,data,i32
+uart_rts_pin,data,i32
+
+# configure the default system store mode for AT+SYSSTORE command
+sys_store,data,u8
