@@ -1,6 +1,6 @@
 ![Render](Assets/GrandNA3_4Port_Node_text.jpg)
 # GrandNA3_4Port_Node
-GrandNA3_4Port_Node is a DMX network node based on the official grandMA3 onPC 4Port Node 4k. My version also has 4DMX outputs with RDM support, a EtherCON connector for sturdy Ethernet connections and a display with a knob for configuration. It also uses the Neutrik halo connectors with adressable rgb leds to show the status of the connection. But it also has some differences. First it doesn't unlock any parameters in the GrandMA onPC software, second its 20x cheaper. About $100 instead of $2000.
+GrandNA3_4Port_Node is a DMX network node based on the official grandMA3 onPC 4Port Node 4k. My version also has 4DMX outputs with RDM support, a EtherCON connector for sturdy Ethernet connections and a display with a rotating knob for configuration. It also uses the Neutrik halo connectors with adressable rgb leds to show the status of the connection. But it also has some differences. First it unfortunately doesn't unlock any parameters in the GrandMA onPC software, but its 20x cheaper. About $100 instead of $2000.
 
 # Features
 This specific DMX node has some really usefull features.
@@ -39,8 +39,8 @@ So this project has 3 PCB's, first the main PCB that does all the hard work, the
 
 # Case
 For this project there needed to be a case to protect the PCB from the outside world. I did this in onshape and am happy with the end result.
-![Open_case](Assets_Open_case.png)
-![Full_case](Assets_Full_case.png)
+![Open_case](Assets/Open_case.png)
+![Full_case](Assets/Full_case.png)
 
 
 # BOM
