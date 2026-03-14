@@ -5540,7 +5540,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "066045bb-c880-42f5-8f98-d1a218a62408")
-		(property "Reference" "#PWR0110"
+		(property "Reference" "#PWR0108"
 			(at 41.91 175.26 0)
 			(effects
 				(font
@@ -5590,7 +5590,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR0110")
+					(reference "#PWR0108")
 					(unit 1)
 				)
 			)
@@ -5606,7 +5606,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0870feb7-638e-4988-9cf4-f2e513418407")
-		(property "Reference" "R33"
+		(property "Reference" "R31"
 			(at 130.81 68.5799 0)
 			(effects
 				(font
@@ -5696,7 +5696,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "R33")
+					(reference "R31")
 					(unit 1)
 				)
 			)
@@ -5831,7 +5831,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0e1443f9-9596-4cd8-8988-482fd341bdc8")
-		(property "Reference" "R29"
+		(property "Reference" "R27"
 			(at 130.81 58.4199 0)
 			(effects
 				(font
@@ -5921,7 +5921,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "R29")
+					(reference "R27")
 					(unit 1)
 				)
 			)
@@ -5937,7 +5937,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0eb3a1b0-d5e6-47f7-85d8-7157a54a607c")
-		(property "Reference" "#PWR0104"
+		(property "Reference" "#PWR0102"
 			(at 101.6 162.56 0)
 			(effects
 				(font
@@ -5987,7 +5987,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR0104")
+					(reference "#PWR0102")
 					(unit 1)
 				)
 			)
@@ -6003,7 +6003,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "11920b3f-324d-4787-ad2c-25a5482a09a6")
-		(property "Reference" "#PWR066"
+		(property "Reference" "#PWR064"
 			(at 153.67 41.91 0)
 			(effects
 				(font
@@ -6053,7 +6053,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR066")
+					(reference "#PWR064")
 					(unit 1)
 				)
 			)
@@ -6069,7 +6069,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "12f37a30-3540-46a4-afe0-0306442cd6c6")
-		(property "Reference" "#PWR093"
+		(property "Reference" "#PWR091"
 			(at 241.3 135.89 0)
 			(effects
 				(font
@@ -6119,7 +6119,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR093")
+					(reference "#PWR091")
 					(unit 1)
 				)
 			)
@@ -6135,7 +6135,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "134866ff-13ac-4478-b701-b1837f058c21")
-		(property "Reference" "#PWR075"
+		(property "Reference" "#PWR073"
 			(at 111.76 62.23 0)
 			(effects
 				(font
@@ -6185,7 +6185,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR075")
+					(reference "#PWR073")
 					(unit 1)
 				)
 			)
@@ -6427,7 +6427,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "1b95daf2-577d-4323-a754-323017512ab9")
-		(property "Reference" "R32"
+		(property "Reference" "R30"
 			(at 67.31 68.5799 0)
 			(effects
 				(font
@@ -6517,7 +6517,7 @@
 		(instances
 			(project ""
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "R32")
+					(reference "R30")
 					(unit 1)
 				)
 			)
@@ -6657,7 +6657,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "2094f277-8ed4-4784-9b15-e822bc7b36a5")
-		(property "Reference" "#PWR081"
+		(property "Reference" "#PWR079"
 			(at 255.27 91.44 0)
 			(effects
 				(font
@@ -6707,7 +6707,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR081")
+					(reference "#PWR079")
 					(unit 1)
 				)
 			)
@@ -6840,7 +6840,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "2829c76a-fa09-4a26-afa7-d1c4f59a0488")
-		(property "Reference" "#PWR0112"
+		(property "Reference" "#PWR0110"
 			(at 44.45 198.12 0)
 			(effects
 				(font
@@ -6890,7 +6890,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR0112")
+					(reference "#PWR0110")
 					(unit 1)
 				)
 			)
@@ -6906,7 +6906,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "283559cf-a7c3-490b-9d11-62c35273c729")
-		(property "Reference" "R37"
+		(property "Reference" "R35"
 			(at 130.81 78.7399 0)
 			(effects
 				(font
@@ -6996,7 +6996,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "R37")
+					(reference "R35")
 					(unit 1)
 				)
 			)
@@ -7012,7 +7012,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "2a83df77-7522-438b-872f-8cce40378ad2")
-		(property "Reference" "#PWR0101"
+		(property "Reference" "#PWR099"
 			(at 252.73 147.32 0)
 			(effects
 				(font
@@ -7062,7 +7062,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR0101")
+					(reference "#PWR099")
 					(unit 1)
 				)
 			)
@@ -7184,7 +7184,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "2b4f22c5-0f29-44a8-a49c-b6e0d04f1e7d")
-		(property "Reference" "#PWR072"
+		(property "Reference" "#PWR070"
 			(at 191.77 58.42 0)
 			(effects
 				(font
@@ -7234,7 +7234,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR072")
+					(reference "#PWR070")
 					(unit 1)
 				)
 			)
@@ -7250,7 +7250,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "2eda73aa-47fe-44a2-acb4-5d98404dda8e")
-		(property "Reference" "#PWR070"
+		(property "Reference" "#PWR068"
 			(at 64.77 58.42 0)
 			(effects
 				(font
@@ -7300,7 +7300,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR070")
+					(reference "#PWR068")
 					(unit 1)
 				)
 			)
@@ -7316,7 +7316,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "30af5947-37d5-4d7c-baa4-d4ce50e3a035")
-		(property "Reference" "#PWR068"
+		(property "Reference" "#PWR066"
 			(at 217.17 41.91 0)
 			(effects
 				(font
@@ -7366,7 +7366,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR068")
+					(reference "#PWR066")
 					(unit 1)
 				)
 			)
@@ -7607,7 +7607,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "3dbc6660-52d9-4f8d-931a-b14860655a2e")
-		(property "Reference" "#PWR095"
+		(property "Reference" "#PWR093"
 			(at 62.23 147.32 0)
 			(effects
 				(font
@@ -7657,7 +7657,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR095")
+					(reference "#PWR093")
 					(unit 1)
 				)
 			)
@@ -7673,7 +7673,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "3dcf46b7-d317-428a-ad49-9476e2676ad4")
-		(property "Reference" "#PWR0102"
+		(property "Reference" "#PWR0100"
 			(at 38.1 162.56 0)
 			(effects
 				(font
@@ -7723,7 +7723,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR0102")
+					(reference "#PWR0100")
 					(unit 1)
 				)
 			)
@@ -7739,7 +7739,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "43bc16ef-c048-4190-8271-724f9d589c08")
-		(property "Reference" "#PWR083"
+		(property "Reference" "#PWR081"
 			(at 111.76 97.79 0)
 			(effects
 				(font
@@ -7789,7 +7789,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR083")
+					(reference "#PWR081")
 					(unit 1)
 				)
 			)
@@ -8024,7 +8024,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "56dd034b-24cb-4678-9256-0b618c6e7580")
-		(property "Reference" "#PWR064"
+		(property "Reference" "#PWR062"
 			(at 90.17 41.91 0)
 			(effects
 				(font
@@ -8074,7 +8074,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR064")
+					(reference "#PWR062")
 					(unit 1)
 				)
 			)
@@ -8090,7 +8090,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "59da8aa7-1395-42a5-944a-9c9c344175f6")
-		(property "Reference" "#PWR091"
+		(property "Reference" "#PWR089"
 			(at 114.3 135.89 0)
 			(effects
 				(font
@@ -8140,7 +8140,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR091")
+					(reference "#PWR089")
 					(unit 1)
 				)
 			)
@@ -8156,7 +8156,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5cc6fee8-1c73-4fec-87cd-ee74dbe816bb")
-		(property "Reference" "R39"
+		(property "Reference" "R37"
 			(at 257.81 78.7399 0)
 			(effects
 				(font
@@ -8246,7 +8246,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "R39")
+					(reference "R37")
 					(unit 1)
 				)
 			)
@@ -8262,7 +8262,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5d18acca-420f-49e2-98aa-1e26924d0501")
-		(property "Reference" "#PWR074"
+		(property "Reference" "#PWR072"
 			(at 48.26 62.23 0)
 			(effects
 				(font
@@ -8312,7 +8312,7 @@
 		(instances
 			(project ""
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR074")
+					(reference "#PWR072")
 					(unit 1)
 				)
 			)
@@ -8328,7 +8328,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5e47a837-321b-4643-817a-f37ec3022cb6")
-		(property "Reference" "#PWR065"
+		(property "Reference" "#PWR063"
 			(at 118.11 41.91 0)
 			(effects
 				(font
@@ -8378,7 +8378,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR065")
+					(reference "#PWR063")
 					(unit 1)
 				)
 			)
@@ -8394,7 +8394,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "6539f581-7857-4c4c-8c74-65f7d04120c9")
-		(property "Reference" "#PWR079"
+		(property "Reference" "#PWR077"
 			(at 128.27 91.44 0)
 			(effects
 				(font
@@ -8444,7 +8444,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR079")
+					(reference "#PWR077")
 					(unit 1)
 				)
 			)
@@ -8579,7 +8579,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "6d0ebed4-1874-4934-be26-b2a157d8bf3d")
-		(property "Reference" "#PWR094"
+		(property "Reference" "#PWR092"
 			(at 38.1 147.32 0)
 			(effects
 				(font
@@ -8629,7 +8629,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR094")
+					(reference "#PWR092")
 					(unit 1)
 				)
 			)
@@ -8769,7 +8769,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7638a286-2f95-4a27-9635-a89ffe461da1")
-		(property "Reference" "R36"
+		(property "Reference" "R34"
 			(at 67.31 78.7399 0)
 			(effects
 				(font
@@ -8859,7 +8859,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "R36")
+					(reference "R34")
 					(unit 1)
 				)
 			)
@@ -8875,7 +8875,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7cefeeaa-5b44-4237-a002-bd70378f294f")
-		(property "Reference" "#PWR067"
+		(property "Reference" "#PWR065"
 			(at 181.61 41.91 0)
 			(effects
 				(font
@@ -8925,7 +8925,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR067")
+					(reference "#PWR065")
 					(unit 1)
 				)
 			)
@@ -9154,7 +9154,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "8c403790-9ea6-4023-818d-23b600064a29")
-		(property "Reference" "#PWR078"
+		(property "Reference" "#PWR076"
 			(at 64.77 91.44 0)
 			(effects
 				(font
@@ -9204,7 +9204,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR078")
+					(reference "#PWR076")
 					(unit 1)
 				)
 			)
@@ -9445,7 +9445,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "992d3dac-5f54-427a-a7da-5ffa41a3465e")
-		(property "Reference" "#PWR069"
+		(property "Reference" "#PWR067"
 			(at 245.11 41.91 0)
 			(effects
 				(font
@@ -9495,7 +9495,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR069")
+					(reference "#PWR067")
 					(unit 1)
 				)
 			)
@@ -9511,7 +9511,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "9eaa32ee-3668-479c-aba5-5f510bd1a94c")
-		(property "Reference" "#PWR087"
+		(property "Reference" "#PWR085"
 			(at 114.3 113.03 0)
 			(effects
 				(font
@@ -9561,7 +9561,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR087")
+					(reference "#PWR085")
 					(unit 1)
 				)
 			)
@@ -10032,7 +10032,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "aff45f54-5907-45e0-a388-4f652088ab89")
-		(property "Reference" "#PWR0100"
+		(property "Reference" "#PWR098"
 			(at 228.6 147.32 0)
 			(effects
 				(font
@@ -10082,7 +10082,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR0100")
+					(reference "#PWR098")
 					(unit 1)
 				)
 			)
@@ -10098,7 +10098,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "b0cee24a-0598-4660-a0db-745ceaf439db")
-		(property "Reference" "#PWR0103"
+		(property "Reference" "#PWR0101"
 			(at 62.23 162.56 0)
 			(effects
 				(font
@@ -10148,7 +10148,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR0103")
+					(reference "#PWR0101")
 					(unit 1)
 				)
 			)
@@ -10164,7 +10164,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "b3886684-5ac5-4d2a-adb4-8205a8d93066")
-		(property "Reference" "#PWR062"
+		(property "Reference" "#PWR060"
 			(at 26.67 41.91 0)
 			(effects
 				(font
@@ -10214,7 +10214,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR062")
+					(reference "#PWR060")
 					(unit 1)
 				)
 			)
@@ -10230,7 +10230,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "b3b7f3dc-0338-46aa-9e41-7926a48819b0")
-		(property "Reference" "#PWR0111"
+		(property "Reference" "#PWR0109"
 			(at 46.99 175.26 0)
 			(effects
 				(font
@@ -10280,7 +10280,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR0111")
+					(reference "#PWR0109")
 					(unit 1)
 				)
 			)
@@ -10296,7 +10296,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "b92e68f0-9e49-4dcd-98b8-623c66a6529f")
-		(property "Reference" "R35"
+		(property "Reference" "R33"
 			(at 257.81 68.5799 0)
 			(effects
 				(font
@@ -10386,7 +10386,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "R35")
+					(reference "R33")
 					(unit 1)
 				)
 			)
@@ -10402,7 +10402,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "bdb62b71-23d7-4176-b284-f9609e8983cf")
-		(property "Reference" "#PWR082"
+		(property "Reference" "#PWR080"
 			(at 48.26 97.79 0)
 			(effects
 				(font
@@ -10452,7 +10452,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR082")
+					(reference "#PWR080")
 					(unit 1)
 				)
 			)
@@ -10700,7 +10700,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c4990cdf-220a-446e-9cb9-f55e91bec4d6")
-		(property "Reference" "#PWR092"
+		(property "Reference" "#PWR090"
 			(at 177.8 135.89 0)
 			(effects
 				(font
@@ -10750,7 +10750,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR092")
+					(reference "#PWR090")
 					(unit 1)
 				)
 			)
@@ -10766,7 +10766,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c4a40a54-55af-40c4-8e9a-974ed5ba843d")
-		(property "Reference" "R30"
+		(property "Reference" "R28"
 			(at 194.31 58.4199 0)
 			(effects
 				(font
@@ -10856,7 +10856,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "R30")
+					(reference "R28")
 					(unit 1)
 				)
 			)
@@ -10872,7 +10872,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c568a82e-69b9-4062-b308-57734ed35521")
-		(property "Reference" "#PWR086"
+		(property "Reference" "#PWR084"
 			(at 50.8 113.03 0)
 			(effects
 				(font
@@ -10922,7 +10922,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR086")
+					(reference "#PWR084")
 					(unit 1)
 				)
 			)
@@ -10938,7 +10938,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c5f174e8-fa86-4bb4-b481-4297a916cce9")
-		(property "Reference" "#PWR084"
+		(property "Reference" "#PWR082"
 			(at 175.26 97.79 0)
 			(effects
 				(font
@@ -10988,7 +10988,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR084")
+					(reference "#PWR082")
 					(unit 1)
 				)
 			)
@@ -11004,7 +11004,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c684bdb1-b20b-4ac2-99fd-a393d12ed610")
-		(property "Reference" "#PWR0106"
+		(property "Reference" "#PWR0104"
 			(at 165.1 162.56 0)
 			(effects
 				(font
@@ -11054,7 +11054,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR0106")
+					(reference "#PWR0104")
 					(unit 1)
 				)
 			)
@@ -11070,7 +11070,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "ca4760b4-6681-4022-9972-27d15027bde9")
-		(property "Reference" "#PWR099"
+		(property "Reference" "#PWR097"
 			(at 189.23 147.32 0)
 			(effects
 				(font
@@ -11120,7 +11120,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR099")
+					(reference "#PWR097")
 					(unit 1)
 				)
 			)
@@ -11136,7 +11136,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "cc04c0f3-9988-445e-9bb9-7996d9f8d4c1")
-		(property "Reference" "#PWR098"
+		(property "Reference" "#PWR096"
 			(at 165.1 147.32 0)
 			(effects
 				(font
@@ -11186,7 +11186,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR098")
+					(reference "#PWR096")
 					(unit 1)
 				)
 			)
@@ -11202,7 +11202,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "cd308bfc-cab5-4f9e-9667-1593989cf79d")
-		(property "Reference" "#PWR085"
+		(property "Reference" "#PWR083"
 			(at 238.76 97.79 0)
 			(effects
 				(font
@@ -11252,7 +11252,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR085")
+					(reference "#PWR083")
 					(unit 1)
 				)
 			)
@@ -11268,7 +11268,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "cf3ffa60-cc0d-48b1-ba0e-f934d636f550")
-		(property "Reference" "#PWR063"
+		(property "Reference" "#PWR061"
 			(at 54.61 41.91 0)
 			(effects
 				(font
@@ -11318,7 +11318,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR063")
+					(reference "#PWR061")
 					(unit 1)
 				)
 			)
@@ -11334,7 +11334,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d0a7296b-eff4-4792-b3a2-33e84416f50f")
-		(property "Reference" "#PWR089"
+		(property "Reference" "#PWR087"
 			(at 241.3 113.03 0)
 			(effects
 				(font
@@ -11384,7 +11384,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR089")
+					(reference "#PWR087")
 					(unit 1)
 				)
 			)
@@ -11507,7 +11507,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d22f8efb-0a06-44aa-beac-5aaab21e4a56")
-		(property "Reference" "#PWR090"
+		(property "Reference" "#PWR088"
 			(at 50.8 135.89 0)
 			(effects
 				(font
@@ -11557,7 +11557,7 @@
 		(instances
 			(project ""
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR090")
+					(reference "#PWR088")
 					(unit 1)
 				)
 			)
@@ -11679,7 +11679,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d3c7e49d-4200-4920-b65e-41b17a23e3dc")
-		(property "Reference" "R34"
+		(property "Reference" "R32"
 			(at 194.31 68.5799 0)
 			(effects
 				(font
@@ -11769,7 +11769,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "R34")
+					(reference "R32")
 					(unit 1)
 				)
 			)
@@ -11904,7 +11904,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d587028b-4a8f-47b9-bee7-46229c44586a")
-		(property "Reference" "#PWR088"
+		(property "Reference" "#PWR086"
 			(at 177.8 113.03 0)
 			(effects
 				(font
@@ -11954,7 +11954,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR088")
+					(reference "#PWR086")
 					(unit 1)
 				)
 			)
@@ -11970,7 +11970,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d5d14751-51c8-4721-8cbc-30657887e8b5")
-		(property "Reference" "#PWR0105"
+		(property "Reference" "#PWR0103"
 			(at 125.73 162.56 0)
 			(effects
 				(font
@@ -12020,7 +12020,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR0105")
+					(reference "#PWR0103")
 					(unit 1)
 				)
 			)
@@ -12036,7 +12036,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d7981e27-2339-458f-9d2d-8eebd77148b3")
-		(property "Reference" "#PWR0107"
+		(property "Reference" "#PWR0105"
 			(at 189.23 162.56 0)
 			(effects
 				(font
@@ -12086,7 +12086,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR0107")
+					(reference "#PWR0105")
 					(unit 1)
 				)
 			)
@@ -12102,7 +12102,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d83ec775-69ab-43f9-9df4-5c4b305ae53e")
-		(property "Reference" "R28"
+		(property "Reference" "R26"
 			(at 67.31 58.4199 0)
 			(effects
 				(font
@@ -12192,7 +12192,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "R28")
+					(reference "R26")
 					(unit 1)
 				)
 			)
@@ -12332,7 +12332,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "ddcbd542-b9a6-4a7a-848d-463390f845b5")
-		(property "Reference" "#PWR071"
+		(property "Reference" "#PWR069"
 			(at 128.27 58.42 0)
 			(effects
 				(font
@@ -12382,7 +12382,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR071")
+					(reference "#PWR069")
 					(unit 1)
 				)
 			)
@@ -12505,7 +12505,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "e14b626c-3745-410d-a003-7368a966d5c3")
-		(property "Reference" "#PWR080"
+		(property "Reference" "#PWR078"
 			(at 191.77 91.44 0)
 			(effects
 				(font
@@ -12555,7 +12555,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR080")
+					(reference "#PWR078")
 					(unit 1)
 				)
 			)
@@ -12571,7 +12571,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "e1afa9c5-8ea4-45ba-8a82-9f0c4bbe39c9")
-		(property "Reference" "#PWR073"
+		(property "Reference" "#PWR071"
 			(at 255.27 58.42 0)
 			(effects
 				(font
@@ -12621,7 +12621,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR073")
+					(reference "#PWR071")
 					(unit 1)
 				)
 			)
@@ -12743,7 +12743,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "e9908c68-5a85-47df-94fd-43b1e6f03c2e")
-		(property "Reference" "#PWR077"
+		(property "Reference" "#PWR075"
 			(at 238.76 62.23 0)
 			(effects
 				(font
@@ -12793,7 +12793,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR077")
+					(reference "#PWR075")
 					(unit 1)
 				)
 			)
@@ -12915,7 +12915,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "ec897e57-d30c-4a12-89e0-449722a3c200")
-		(property "Reference" "R31"
+		(property "Reference" "R29"
 			(at 257.81 58.4199 0)
 			(effects
 				(font
@@ -13005,7 +13005,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "R31")
+					(reference "R29")
 					(unit 1)
 				)
 			)
@@ -13021,7 +13021,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f0fa1016-5bdf-4cca-a058-2e1a79c3df5d")
-		(property "Reference" "R38"
+		(property "Reference" "R36"
 			(at 194.31 78.7399 0)
 			(effects
 				(font
@@ -13111,7 +13111,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "R38")
+					(reference "R36")
 					(unit 1)
 				)
 			)
@@ -13127,7 +13127,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f31647d8-17f5-4f74-a2d3-5e75a92ea38c")
-		(property "Reference" "#PWR096"
+		(property "Reference" "#PWR094"
 			(at 101.6 147.32 0)
 			(effects
 				(font
@@ -13177,7 +13177,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR096")
+					(reference "#PWR094")
 					(unit 1)
 				)
 			)
@@ -13193,7 +13193,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f926f730-89ec-4f1a-a4ca-8bc74ba41a7a")
-		(property "Reference" "#PWR097"
+		(property "Reference" "#PWR095"
 			(at 125.73 147.32 0)
 			(effects
 				(font
@@ -13243,7 +13243,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR097")
+					(reference "#PWR095")
 					(unit 1)
 				)
 			)
@@ -13259,7 +13259,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "fb214d8a-ec7c-47a1-aec9-11893891aa59")
-		(property "Reference" "#PWR0109"
+		(property "Reference" "#PWR0107"
 			(at 252.73 162.56 0)
 			(effects
 				(font
@@ -13309,7 +13309,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR0109")
+					(reference "#PWR0107")
 					(unit 1)
 				)
 			)
@@ -13438,7 +13438,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "fdcab35e-1cf5-4925-a273-47688de258d2")
-		(property "Reference" "#PWR0108"
+		(property "Reference" "#PWR0106"
 			(at 228.6 162.56 0)
 			(effects
 				(font
@@ -13488,7 +13488,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR0108")
+					(reference "#PWR0106")
 					(unit 1)
 				)
 			)
@@ -13504,7 +13504,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "ff51ae6f-e18a-4961-ba8c-8b1358fece08")
-		(property "Reference" "#PWR076"
+		(property "Reference" "#PWR074"
 			(at 175.26 62.23 0)
 			(effects
 				(font
@@ -13554,7 +13554,7 @@
 		(instances
 			(project "Artnet_DMX_Converter"
 				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/b3a79f2f-e001-40a5-bffa-f992dd1248da"
-					(reference "#PWR076")
+					(reference "#PWR074")
 					(unit 1)
 				)
 			)
