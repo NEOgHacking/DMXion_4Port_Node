@@ -9524,7 +9524,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "LCSC:IND-SMD_L2.0-W1.6_AOTA-B201610S3R3-101-T"
+		(property "Footprint" "RP2350_80QFN_minimal:L_pol_2016"
 			(at 57.15 60.96 0)
 			(effects
 				(font
@@ -9630,7 +9630,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+		(property "Footprint" "RP2350_80QFN_minimal:C_0402_1005Metric_small_pads"
 			(at 45.4152 66.04 0)
 			(effects
 				(font
@@ -9840,7 +9840,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_DFN_QFN:QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm"
+		(property "Footprint" "RP2350_80QFN_minimal:RP2350-QFN-80-1EP_10x10_P0.4mm_EP3.4x3.4mm_ThermalVias"
 			(at 146.05 97.79 0)
 			(effects
 				(font
@@ -11080,7 +11080,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+		(property "Footprint" "RP2350_80QFN_minimal:C_0402_1005Metric_small_pads"
 			(at 32.7152 66.04 0)
 			(effects
 				(font
