@@ -1,1512 +1,2046 @@
-(kicad_sch 
-  (version 20260306) 
-  (generator "eeschema") 
-  (generator_version "10.0") 
-  (uuid "0573bab3-3db2-4866-818d-6abe9b3bad16") 
-  (paper "A4") 
-  (title_block 
-    (title "GrandNA3_4Port_Node")) 
-  (lib_symbols 
-    (symbol "Connector:TestPoint" 
-      (pin_numbers 
-        (hide yes)) 
-      (pin_names 
-        (offset 0.762) 
-        (hide yes)) 
-      (exclude_from_sim no) 
-      (in_bom yes) 
-      (on_board yes) 
-      (in_pos_files yes) 
-      (duplicate_pin_numbers_are_jumpers no) 
-      (property "Reference" "TP" 
-        (at 0 6.858 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "Value" "TestPoint" 
-        (at 0 5.08 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "Footprint" "" 
-        (at 5.08 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "Datasheet" "" 
-        (at 5.08 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "Description" "test point" 
-        (at 0 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "ki_keywords" "test point tp" 
-        (at 0 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "ki_fp_filters" "Pin* Test*" 
-        (at 0 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (symbol "TestPoint_0_1" 
-        (circle 
-          (center 0 3.302) 
-          (radius 0.762) 
-          (stroke 
-            (width 0) 
-            (type default)) 
-          (fill 
-            (type none)))) 
-      (symbol "TestPoint_1_1" 
-        (pin passive line 
-          (at 0 0 90) 
-          (length 2.54) 
-          (name "1" 
-            (effects 
-              (font 
-                (size 1.27 1.27)))) 
-          (number "1" 
-            (effects 
-              (font 
-                (size 1.27 1.27)))))) 
-      (embedded_fonts no)) 
-    (symbol "Connector_Generic:Conn_02x04_Odd_Even" 
-      (pin_names 
-        (offset 1.016) 
-        (hide yes)) 
-      (exclude_from_sim no) 
-      (in_bom yes) 
-      (on_board yes) 
-      (in_pos_files yes) 
-      (duplicate_pin_numbers_are_jumpers no) 
-      (property "Reference" "J" 
-        (at 1.27 5.08 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "Value" "Conn_02x04_Odd_Even" 
-        (at 1.27 -7.62 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "Footprint" "" 
-        (at 0 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "Datasheet" "" 
-        (at 0 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "Description" "Generic connector, double row, 02x04, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)" 
-        (at 0 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "ki_keywords" "connector" 
-        (at 0 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "ki_fp_filters" "Connector*:*_2x??_*" 
-        (at 0 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (symbol "Conn_02x04_Odd_Even_1_1" 
-        (rectangle 
-          (start -1.27 3.81) 
-          (end 3.81 -6.35) 
-          (stroke 
-            (width 0.254) 
-            (type default)) 
-          (fill 
-            (type background))) 
-        (rectangle 
-          (start -1.27 2.667) 
-          (end 0 2.413) 
-          (stroke 
-            (width 0.1524) 
-            (type default)) 
-          (fill 
-            (type none))) 
-        (rectangle 
-          (start -1.27 0.127) 
-          (end 0 -0.127) 
-          (stroke 
-            (width 0.1524) 
-            (type default)) 
-          (fill 
-            (type none))) 
-        (rectangle 
-          (start -1.27 -2.413) 
-          (end 0 -2.667) 
-          (stroke 
-            (width 0.1524) 
-            (type default)) 
-          (fill 
-            (type none))) 
-        (rectangle 
-          (start -1.27 -4.953) 
-          (end 0 -5.207) 
-          (stroke 
-            (width 0.1524) 
-            (type default)) 
-          (fill 
-            (type none))) 
-        (rectangle 
-          (start 3.81 2.667) 
-          (end 2.54 2.413) 
-          (stroke 
-            (width 0.1524) 
-            (type default)) 
-          (fill 
-            (type none))) 
-        (rectangle 
-          (start 3.81 0.127) 
-          (end 2.54 -0.127) 
-          (stroke 
-            (width 0.1524) 
-            (type default)) 
-          (fill 
-            (type none))) 
-        (rectangle 
-          (start 3.81 -2.413) 
-          (end 2.54 -2.667) 
-          (stroke 
-            (width 0.1524) 
-            (type default)) 
-          (fill 
-            (type none))) 
-        (rectangle 
-          (start 3.81 -4.953) 
-          (end 2.54 -5.207) 
-          (stroke 
-            (width 0.1524) 
-            (type default)) 
-          (fill 
-            (type none))) 
-        (pin passive line 
-          (at -5.08 2.54 0) 
-          (length 3.81) 
-          (name "Pin_1" 
-            (effects 
-              (font 
-                (size 1.27 1.27)))) 
-          (number "1" 
-            (effects 
-              (font 
-                (size 1.27 1.27))))) 
-        (pin passive line 
-          (at 7.62 2.54 180) 
-          (length 3.81) 
-          (name "Pin_2" 
-            (effects 
-              (font 
-                (size 1.27 1.27)))) 
-          (number "2" 
-            (effects 
-              (font 
-                (size 1.27 1.27))))) 
-        (pin passive line 
-          (at -5.08 0 0) 
-          (length 3.81) 
-          (name "Pin_3" 
-            (effects 
-              (font 
-                (size 1.27 1.27)))) 
-          (number "3" 
-            (effects 
-              (font 
-                (size 1.27 1.27))))) 
-        (pin passive line 
-          (at 7.62 0 180) 
-          (length 3.81) 
-          (name "Pin_4" 
-            (effects 
-              (font 
-                (size 1.27 1.27)))) 
-          (number "4" 
-            (effects 
-              (font 
-                (size 1.27 1.27))))) 
-        (pin passive line 
-          (at -5.08 -2.54 0) 
-          (length 3.81) 
-          (name "Pin_5" 
-            (effects 
-              (font 
-                (size 1.27 1.27)))) 
-          (number "5" 
-            (effects 
-              (font 
-                (size 1.27 1.27))))) 
-        (pin passive line 
-          (at 7.62 -2.54 180) 
-          (length 3.81) 
-          (name "Pin_6" 
-            (effects 
-              (font 
-                (size 1.27 1.27)))) 
-          (number "6" 
-            (effects 
-              (font 
-                (size 1.27 1.27))))) 
-        (pin passive line 
-          (at -5.08 -5.08 0) 
-          (length 3.81) 
-          (name "Pin_7" 
-            (effects 
-              (font 
-                (size 1.27 1.27)))) 
-          (number "7" 
-            (effects 
-              (font 
-                (size 1.27 1.27))))) 
-        (pin passive line 
-          (at 7.62 -5.08 180) 
-          (length 3.81) 
-          (name "Pin_8" 
-            (effects 
-              (font 
-                (size 1.27 1.27)))) 
-          (number "8" 
-            (effects 
-              (font 
-                (size 1.27 1.27)))))) 
-      (embedded_fonts no)) 
-    (symbol "power:+3V3" 
-      (power global) 
-      (pin_numbers 
-        (hide yes)) 
-      (pin_names 
-        (offset 0) 
-        (hide yes)) 
-      (exclude_from_sim no) 
-      (in_bom yes) 
-      (on_board yes) 
-      (in_pos_files yes) 
-      (duplicate_pin_numbers_are_jumpers no) 
-      (property "Reference" "#PWR" 
-        (at 0 -3.81 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "Value" "+3V3" 
-        (at 0 3.556 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "Footprint" "" 
-        (at 0 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "Datasheet" "" 
-        (at 0 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "Description" "Power symbol creates a global label with name \"+3V3\"" 
-        (at 0 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "ki_keywords" "global power" 
-        (at 0 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (symbol "+3V3_0_1" 
-        (polyline 
-          (pts 
-            (xy -0.762 1.27) 
-            (xy 0 2.54)) 
-          (stroke 
-            (width 0) 
-            (type default)) 
-          (fill 
-            (type none))) 
-        (polyline 
-          (pts 
-            (xy 0 2.54) 
-            (xy 0.762 1.27)) 
-          (stroke 
-            (width 0) 
-            (type default)) 
-          (fill 
-            (type none))) 
-        (polyline 
-          (pts 
-            (xy 0 0) 
-            (xy 0 2.54)) 
-          (stroke 
-            (width 0) 
-            (type default)) 
-          (fill 
-            (type none)))) 
-      (symbol "+3V3_1_1" 
-        (pin power_in line 
-          (at 0 0 90) 
-          (length 0) 
-          (name "" 
-            (effects 
-              (font 
-                (size 1.27 1.27)))) 
-          (number "1" 
-            (effects 
-              (font 
-                (size 1.27 1.27)))))) 
-      (embedded_fonts no)) 
-    (symbol "power:GND" 
-      (power global) 
-      (pin_numbers 
-        (hide yes)) 
-      (pin_names 
-        (offset 0) 
-        (hide yes)) 
-      (exclude_from_sim no) 
-      (in_bom yes) 
-      (on_board yes) 
-      (in_pos_files yes) 
-      (duplicate_pin_numbers_are_jumpers no) 
-      (property "Reference" "#PWR" 
-        (at 0 -6.35 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "Value" "GND" 
-        (at 0 -3.81 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "Footprint" "" 
-        (at 0 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "Datasheet" "" 
-        (at 0 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "Description" "Power symbol creates a global label with name \"GND\" , ground" 
-        (at 0 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (property "ki_keywords" "global power" 
-        (at 0 0 0) 
-        (show_name no) 
-        (do_not_autoplace no) 
-        (hide yes) 
-        (effects 
-          (font 
-            (size 1.27 1.27)))) 
-      (symbol "GND_0_1" 
-        (polyline 
-          (pts 
-            (xy 0 0) 
-            (xy 0 -1.27) 
-            (xy 1.27 -1.27) 
-            (xy 0 -2.54) 
-            (xy -1.27 -1.27) 
-            (xy 0 -1.27)) 
-          (stroke 
-            (width 0) 
-            (type default)) 
-          (fill 
-            (type none)))) 
-      (symbol "GND_1_1" 
-        (pin power_in line 
-          (at 0 0 270) 
-          (length 0) 
-          (name "" 
-            (effects 
-              (font 
-                (size 1.27 1.27)))) 
-          (number "1" 
-            (effects 
-              (font 
-                (size 1.27 1.27)))))) 
-      (embedded_fonts no))) 
-  (junction 
-    (at 127 87.63) 
-    (diameter 0) 
-    (color 0 0 0 0) 
-    (uuid "083a08da-d901-47d8-bf27-41397f5a612d")) 
-  (junction 
-    (at 148.59 82.55) 
-    (diameter 0) 
-    (color 0 0 0 0) 
-    (uuid "3620429e-766d-4171-9cd8-fc955d66603e")) 
-  (junction 
-    (at 127 82.55) 
-    (diameter 0) 
-    (color 0 0 0 0) 
-    (uuid "3dbaad44-ad14-468a-96af-ae44a09ed8e9")) 
-  (junction 
-    (at 149.86 90.17) 
-    (diameter 0) 
-    (color 0 0 0 0) 
-    (uuid "5f93c5f3-107d-4941-b8c2-35997205781b")) 
-  (junction 
-    (at 148.59 87.63) 
-    (diameter 0) 
-    (color 0 0 0 0) 
-    (uuid "655b4815-2c03-4a5a-9bec-2962f6eebe4e")) 
-  (junction 
-    (at 127 85.09) 
-    (diameter 0) 
-    (color 0 0 0 0) 
-    (uuid "7d6df715-06ac-4c0a-b988-51c5a8786468")) 
-  (junction 
-    (at 132.08 90.17) 
-    (diameter 0) 
-    (color 0 0 0 0) 
-    (uuid "d4f2ea49-d774-43cf-97c1-15567739cfe7")) 
-  (junction 
-    (at 149.86 85.09) 
-    (diameter 0) 
-    (color 0 0 0 0) 
-    (uuid "f8d60d4f-9bfe-405e-a818-2576bdba591e")) 
-  (wire 
-    (pts 
-      (xy 151.13 85.09) 
-      (xy 149.86 85.09)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "0b19b6f1-8948-4e71-b14b-fe057252635d")) 
-  (wire 
-    (pts 
-      (xy 132.08 90.17) 
-      (xy 132.08 92.71)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "0c28ec55-4cd5-4378-9f7d-23406b1ab185")) 
-  (wire 
-    (pts 
-      (xy 127 82.55) 
-      (xy 125.73 82.55)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "0ff68d82-2d69-4fc6-bfba-48841fb3c586")) 
-  (wire 
-    (pts 
-      (xy 147.32 82.55) 
-      (xy 148.59 82.55)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "1f149999-64a6-47b8-92c7-08ed1fe5fec0")) 
-  (wire 
-    (pts 
-      (xy 127 86.36) 
-      (xy 127 85.09)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "21e101db-4097-4c1e-a587-5ea957d7b3b3")) 
-  (wire 
-    (pts 
-      (xy 148.59 82.55) 
-      (xy 148.59 80.01)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "27a9ff19-5151-4526-b8c3-63e11cc65b57")) 
-  (wire 
-    (pts 
-      (xy 127 85.09) 
-      (xy 134.62 85.09)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "2b3f69ae-841b-41a4-8bb1-4b8afb39ec37")) 
-  (wire 
-    (pts 
-      (xy 148.59 82.55) 
-      (xy 151.13 82.55)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "4941b0bd-700b-491a-b2ca-33d3418aec52")) 
-  (wire 
-    (pts 
-      (xy 148.59 87.63) 
-      (xy 148.59 82.55)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "5a8cfd0a-3ca5-4495-a800-59717bc494a7")) 
-  (wire 
-    (pts 
-      (xy 127 82.55) 
-      (xy 134.62 82.55)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "75f2e606-8090-4dba-ad4b-64af12fccaeb")) 
-  (wire 
-    (pts 
-      (xy 116.84 83.82) 
-      (xy 127 83.82)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "80f3d7c3-670d-40ab-af4a-48ecde1b3c82")) 
-  (wire 
-    (pts 
-      (xy 149.86 86.36) 
-      (xy 149.86 85.09)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "89fe452c-3cf6-427e-915b-d0aea777cd2b")) 
-  (wire 
-    (pts 
-      (xy 134.62 90.17) 
-      (xy 132.08 90.17)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "8d310674-d3e4-4753-a927-b79eb7e58072")) 
-  (wire 
-    (pts 
-      (xy 149.86 91.44) 
-      (xy 149.86 90.17)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "967624e5-4cf7-4863-80ee-a372f28de0d7")) 
-  (wire 
-    (pts 
-      (xy 160.02 86.36) 
-      (xy 149.86 86.36)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "96926969-9f7f-49d9-989f-df9aa90e90e7")) 
-  (wire 
-    (pts 
-      (xy 149.86 90.17) 
-      (xy 147.32 90.17)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "98c1a5dc-f65e-4125-8bce-f2914fe96449")) 
-  (wire 
-    (pts 
-      (xy 160.02 91.44) 
-      (xy 149.86 91.44)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "af00c45f-bae9-4213-ae8a-3051a626ca12")) 
-  (wire 
-    (pts 
-      (xy 127 83.82) 
-      (xy 127 82.55)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "b724a73f-e31c-4976-a729-2d40bdcabe6c")) 
-  (wire 
-    (pts 
-      (xy 149.86 85.09) 
-      (xy 147.32 85.09)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "b735ddd7-3059-4fc9-bc24-488bc1de9e80")) 
-  (wire 
-    (pts 
-      (xy 148.59 87.63) 
-      (xy 151.13 87.63)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "ba05c1dc-1bde-4715-b5e9-c6e78d870974")) 
-  (wire 
-    (pts 
-      (xy 127 87.63) 
-      (xy 127 88.9)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "ba33af39-5acd-494e-93ab-41d63c8da825")) 
-  (wire 
-    (pts 
-      (xy 151.13 90.17) 
-      (xy 149.86 90.17)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "baadf99d-0062-43fb-8e13-d900759c0015")) 
-  (wire 
-    (pts 
-      (xy 147.32 87.63) 
-      (xy 148.59 87.63)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "bcdd2a54-3337-4a0a-9110-561be0c9c437")) 
-  (wire 
-    (pts 
-      (xy 125.73 90.17) 
-      (xy 132.08 90.17)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "be1fcec5-8455-48a1-99e8-299e3b99349b")) 
-  (wire 
-    (pts 
-      (xy 116.84 88.9) 
-      (xy 127 88.9)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "daf4e3f6-1c5e-4663-addd-4d8906060e08")) 
-  (wire 
-    (pts 
-      (xy 116.84 86.36) 
-      (xy 127 86.36)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "e73dfda3-3f79-4edd-8280-bc99700fe8aa")) 
-  (wire 
-    (pts 
-      (xy 127 85.09) 
-      (xy 125.73 85.09)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "e83c0d97-6a3a-4d32-a792-a29c80db88de")) 
-  (wire 
-    (pts 
-      (xy 127 87.63) 
-      (xy 134.62 87.63)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "f009c0c0-ad32-4d86-a449-61db8bfe4730")) 
-  (wire 
-    (pts 
-      (xy 125.73 87.63) 
-      (xy 127 87.63)) 
-    (stroke 
-      (width 0) 
-      (type default)) 
-    (uuid "f312233f-b46d-4992-86ef-2299f39e7273")) 
-  (hierarchical_label "RST" 
-    (shape input) 
-    (at 160.02 86.36 0) 
-    (effects 
-      (font 
-        (size 1.27 1.27)) 
-      (justify left)) 
-    (uuid "7cbc7ad6-8820-4992-a4d4-9fa347626395")) 
-  (hierarchical_label "IO0" 
-    (shape input) 
-    (at 116.84 86.36 180) 
-    (effects 
-      (font 
-        (size 1.27 1.27)) 
-      (justify right)) 
-    (uuid "931d1020-6e2a-4001-8b81-5935c8eb61e7")) 
-  (hierarchical_label "TX" 
-    (shape output) 
-    (at 160.02 91.44 0) 
-    (effects 
-      (font 
-        (size 1.27 1.27)) 
-      (justify left)) 
-    (uuid "ccdda91a-513c-4bb9-8b73-ee9cb0f705bd")) 
-  (hierarchical_label "RX" 
-    (shape input) 
-    (at 116.84 83.82 180) 
-    (effects 
-      (font 
-        (size 1.27 1.27)) 
-      (justify right)) 
-    (uuid "d2f47eb0-7fd1-4376-be86-04be20314569")) 
-  (hierarchical_label "IO2" 
-    (shape input) 
-    (at 116.84 88.9 180) 
-    (effects 
-      (font 
-        (size 1.27 1.27)) 
-      (justify right)) 
-    (uuid "f9352d9e-5ece-4bed-8740-d73a20fc6585")) 
-  (symbol 
-    (lib_id "Connector:TestPoint") 
-    (at 151.13 87.63 270) 
-    (unit 1) 
-    (body_style 1) 
-    (exclude_from_sim no) 
-    (in_bom yes) 
-    (on_board yes) 
-    (in_pos_files yes) 
-    (dnp no) 
-    (uuid "18c484a6-78f2-4dee-801a-635524c19a98") 
-    (property "Reference" "TP42" 
-      (at 155.194 87.63 90) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)) 
-        (justify left))) 
-    (property "Value" "TestPoint" 
-      (at 153.1621 90.17 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)) 
-        (justify left))) 
-    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm" 
-      (at 151.13 92.71 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Datasheet" "" 
-      (at 151.13 92.71 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Description" "test point" 
-      (at 151.13 87.63 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (pin "1" 
-      (uuid "9b915297-bc65-4640-9069-2130a62a9678")) 
-    (instances 
-      (project "DMXion 4port node" 
-        (path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370" 
-          (reference "TP42") 
-          (unit 1))))) 
-  (symbol 
-    (lib_id "power:+3V3") 
-    (at 148.59 80.01 0) 
-    (mirror y) 
-    (unit 1) 
-    (body_style 1) 
-    (exclude_from_sim no) 
-    (in_bom yes) 
-    (on_board yes) 
-    (in_pos_files yes) 
-    (dnp no) 
-    (fields_autoplaced yes) 
-    (uuid "2220880c-b1d1-47e7-bc69-bd5c114c2cda") 
-    (property "Reference" "#PWR0140" 
-      (at 148.59 83.82 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Value" "+3V3" 
-      (at 148.59 74.93 0) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Footprint" "" 
-      (at 148.59 80.01 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Datasheet" "" 
-      (at 148.59 80.01 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Description" "Power symbol creates a global label with name \"+3V3\"" 
-      (at 148.59 80.01 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (pin "1" 
-      (uuid "0e9fdcf7-dac4-493b-90de-35e1bdb84fe1")) 
-    (instances 
-      (project "DMXion 4port node" 
-        (path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370" 
-          (reference "#PWR0140") 
-          (unit 1))))) 
-  (symbol 
-    (lib_id "Connector:TestPoint") 
-    (at 125.73 82.55 90) 
-    (unit 1) 
-    (body_style 1) 
-    (exclude_from_sim no) 
-    (in_bom yes) 
-    (on_board yes) 
-    (in_pos_files yes) 
-    (dnp no) 
-    (uuid "5245b499-ffef-4329-ad52-3104a4ff4038") 
-    (property "Reference" "TP37" 
-      (at 121.666 82.55 90) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)) 
-        (justify left))) 
-    (property "Value" "TestPoint" 
-      (at 123.6979 80.01 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)) 
-        (justify left))) 
-    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm" 
-      (at 125.73 77.47 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Datasheet" "" 
-      (at 125.73 77.47 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Description" "test point" 
-      (at 125.73 82.55 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (pin "1" 
-      (uuid "583503fe-9dc4-4be1-ba4c-9971d574890c")) 
-    (instances 
-      (project "DMXion 4port node" 
-        (path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370" 
-          (reference "TP37") 
-          (unit 1))))) 
-  (symbol 
-    (lib_id "Connector:TestPoint") 
-    (at 125.73 87.63 90) 
-    (unit 1) 
-    (body_style 1) 
-    (exclude_from_sim no) 
-    (in_bom yes) 
-    (on_board yes) 
-    (in_pos_files yes) 
-    (dnp no) 
-    (uuid "59f2658b-4cd5-487c-8e41-bd8f7af48db1") 
-    (property "Reference" "TP41" 
-      (at 121.666 87.63 90) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)) 
-        (justify left))) 
-    (property "Value" "TestPoint" 
-      (at 123.6979 85.09 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)) 
-        (justify left))) 
-    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm" 
-      (at 125.73 82.55 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Datasheet" "" 
-      (at 125.73 82.55 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Description" "test point" 
-      (at 125.73 87.63 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (pin "1" 
-      (uuid "930b0443-ff0b-4996-9a7b-eb037ab4016d")) 
-    (instances 
-      (project "DMXion 4port node" 
-        (path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370" 
-          (reference "TP41") 
-          (unit 1))))) 
-  (symbol 
-    (lib_id "power:GND") 
-    (at 132.08 92.71 0) 
-    (mirror y) 
-    (unit 1) 
-    (body_style 1) 
-    (exclude_from_sim no) 
-    (in_bom yes) 
-    (on_board yes) 
-    (in_pos_files yes) 
-    (dnp no) 
-    (fields_autoplaced yes) 
-    (uuid "5baafc88-81fe-470c-a9d5-355fc226e57b") 
-    (property "Reference" "#PWR0141" 
-      (at 132.08 99.06 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Value" "GND" 
-      (at 132.08 97.79 0) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Footprint" "" 
-      (at 132.08 92.71 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Datasheet" "" 
-      (at 132.08 92.71 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Description" "Power symbol creates a global label with name \"GND\" , ground" 
-      (at 132.08 92.71 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (pin "1" 
-      (uuid "2997b426-fbb2-4882-8fa5-69e41d780658")) 
-    (instances 
-      (project "DMXion 4port node" 
-        (path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370" 
-          (reference "#PWR0141") 
-          (unit 1))))) 
-  (symbol 
-    (lib_id "Connector_Generic:Conn_02x04_Odd_Even") 
-    (at 139.7 87.63 0) 
-    (mirror x) 
-    (unit 1) 
-    (body_style 1) 
-    (exclude_from_sim no) 
-    (in_bom yes) 
-    (on_board yes) 
-    (in_pos_files yes) 
-    (dnp no) 
-    (uuid "60cb9b8b-7741-46c4-9a0b-84322c28b7fc") 
-    (property "Reference" "J13" 
-      (at 140.97 96.52 0) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Value" "Conn_02x04" 
-      (at 140.97 93.98 0) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_2x04_P2.54mm_Vertical" 
-      (at 139.7 87.63 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Datasheet" "" 
-      (at 139.7 87.63 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Description" "Generic connector, double row, 02x04, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)" 
-      (at 139.7 87.63 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "KLC_S3.3" "" 
-      (at 139.7 87.63 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "KLC_S4.1" "" 
-      (at 139.7 87.63 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "KLC_S4.2_DVDD" "" 
-      (at 139.7 87.63 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "KLC_S4.2_VREG_LX" "" 
-      (at 139.7 87.63 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (pin "1" 
-      (uuid "9e783d25-d49f-44f3-a5cc-90d38da8eeba")) 
-    (pin "6" 
-      (uuid "aff786b1-3303-4264-ad38-be096955ea3b")) 
-    (pin "2" 
-      (uuid "7cc57674-79b4-44ca-9a23-a8cbbc4e5478")) 
-    (pin "8" 
-      (uuid "dcb38b2d-8701-4782-bbec-fbfd2659937c")) 
-    (pin "3" 
-      (uuid "c9960d7e-9267-4254-b6bf-9720ca19ea0b")) 
-    (pin "5" 
-      (uuid "5f673f51-06aa-4e6c-aedf-52b431edca23")) 
-    (pin "7" 
-      (uuid "c41076fa-95ad-4dff-a7fd-1a1314371cd9")) 
-    (pin "4" 
-      (uuid "bedb8099-bf21-4a16-a1f3-5758ab38427d")) 
-    (instances 
-      (project "DMXion 4port node" 
-        (path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370" 
-          (reference "J13") 
-          (unit 1))))) 
-  (symbol 
-    (lib_id "Connector:TestPoint") 
-    (at 125.73 90.17 90) 
-    (unit 1) 
-    (body_style 1) 
-    (exclude_from_sim no) 
-    (in_bom yes) 
-    (on_board yes) 
-    (in_pos_files yes) 
-    (dnp no) 
-    (uuid "7f2e2f44-c53e-4f80-81c4-7406fd3d717d") 
-    (property "Reference" "TP43" 
-      (at 121.666 90.17 90) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)) 
-        (justify left))) 
-    (property "Value" "TestPoint" 
-      (at 123.6979 87.63 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)) 
-        (justify left))) 
-    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm" 
-      (at 125.73 85.09 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Datasheet" "" 
-      (at 125.73 85.09 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Description" "test point" 
-      (at 125.73 90.17 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (pin "1" 
-      (uuid "4e743b15-e972-4dff-8645-7cebf0b5188e")) 
-    (instances 
-      (project "DMXion 4port node" 
-        (path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370" 
-          (reference "TP43") 
-          (unit 1))))) 
-  (symbol 
-    (lib_id "Connector:TestPoint") 
-    (at 151.13 85.09 270) 
-    (unit 1) 
-    (body_style 1) 
-    (exclude_from_sim no) 
-    (in_bom yes) 
-    (on_board yes) 
-    (in_pos_files yes) 
-    (dnp no) 
-    (uuid "8225ef35-99c5-43ad-8d0b-66f74ec7fa3e") 
-    (property "Reference" "TP40" 
-      (at 155.194 85.09 90) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)) 
-        (justify left))) 
-    (property "Value" "TestPoint" 
-      (at 153.1621 87.63 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)) 
-        (justify left))) 
-    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm" 
-      (at 151.13 90.17 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Datasheet" "" 
-      (at 151.13 90.17 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Description" "test point" 
-      (at 151.13 85.09 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (pin "1" 
-      (uuid "4f8f79e4-1074-4bc0-ad52-16cec0fe43d2")) 
-    (instances 
-      (project "DMXion 4port node" 
-        (path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370" 
-          (reference "TP40") 
-          (unit 1))))) 
-  (symbol 
-    (lib_id "Connector:TestPoint") 
-    (at 125.73 85.09 90) 
-    (unit 1) 
-    (body_style 1) 
-    (exclude_from_sim no) 
-    (in_bom yes) 
-    (on_board yes) 
-    (in_pos_files yes) 
-    (dnp no) 
-    (uuid "856a4776-57c6-4688-b16e-6355a7f7e13a") 
-    (property "Reference" "TP39" 
-      (at 121.666 85.09 90) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)) 
-        (justify left))) 
-    (property "Value" "TestPoint" 
-      (at 123.6979 82.55 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)) 
-        (justify left))) 
-    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm" 
-      (at 125.73 80.01 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Datasheet" "" 
-      (at 125.73 80.01 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Description" "test point" 
-      (at 125.73 85.09 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (pin "1" 
-      (uuid "0a046279-e580-43d0-bda5-bbd35c40e2d5")) 
-    (instances 
-      (project "DMXion 4port node" 
-        (path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370" 
-          (reference "TP39") 
-          (unit 1))))) 
-  (symbol 
-    (lib_id "Connector:TestPoint") 
-    (at 151.13 90.17 270) 
-    (unit 1) 
-    (body_style 1) 
-    (exclude_from_sim no) 
-    (in_bom yes) 
-    (on_board yes) 
-    (in_pos_files yes) 
-    (dnp no) 
-    (uuid "ae5ac799-5173-4e22-9b79-a6c3ca25cbe5") 
-    (property "Reference" "TP44" 
-      (at 155.194 90.17 90) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)) 
-        (justify left))) 
-    (property "Value" "TestPoint" 
-      (at 153.1621 92.71 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)) 
-        (justify left))) 
-    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm" 
-      (at 151.13 95.25 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Datasheet" "" 
-      (at 151.13 95.25 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Description" "test point" 
-      (at 151.13 90.17 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (pin "1" 
-      (uuid "771438fd-9975-4423-a7ab-f3a18c44b863")) 
-    (instances 
-      (project "DMXion 4port node" 
-        (path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370" 
-          (reference "TP44") 
-          (unit 1))))) 
-  (symbol 
-    (lib_id "Connector:TestPoint") 
-    (at 151.13 82.55 270) 
-    (unit 1) 
-    (body_style 1) 
-    (exclude_from_sim no) 
-    (in_bom yes) 
-    (on_board yes) 
-    (in_pos_files yes) 
-    (dnp no) 
-    (uuid "b540e4d7-67f3-48fd-b663-65276a3da04e") 
-    (property "Reference" "TP38" 
-      (at 155.194 82.55 90) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)) 
-        (justify left))) 
-    (property "Value" "TestPoint" 
-      (at 153.1621 85.09 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)) 
-        (justify left))) 
-    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm" 
-      (at 151.13 87.63 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Datasheet" "" 
-      (at 151.13 87.63 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (property "Description" "test point" 
-      (at 151.13 82.55 0) 
-      (hide yes) 
-      (show_name no) 
-      (do_not_autoplace no) 
-      (effects 
-        (font 
-          (size 1.27 1.27)))) 
-    (pin "1" 
-      (uuid "7e498ec8-fa7f-4fb6-b7a8-912975da65f2")) 
-    (instances 
-      (project "DMXion 4port node" 
-        (path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370" 
-          (reference "TP38") 
-          (unit 1))))))
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "0573bab3-3db2-4866-818d-6abe9b3bad16")
+	(paper "A4")
+	(title_block
+		(title "GrandNA3_4Port_Node")
+	)
+	(lib_symbols
+		(symbol "Connector:TestPoint"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0.762)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "TP"
+				(at 0 6.858 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "TestPoint"
+				(at 0 5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 5.08 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 5.08 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "test point"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "test point tp"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "Pin* Test*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "TestPoint_0_1"
+				(circle
+					(center 0 3.302)
+					(radius 0.762)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "TestPoint_1_1"
+				(pin passive line
+					(at 0 0 90)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Connector_Generic:Conn_02x04_Odd_Even"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "J"
+				(at 1.27 5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_02x04_Odd_Even"
+				(at 1.27 -7.62 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Generic connector, double row, 02x04, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_2x??_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Conn_02x04_Odd_Even_1_1"
+				(rectangle
+					(start -1.27 3.81)
+					(end 3.81 -6.35)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(rectangle
+					(start -1.27 2.667)
+					(end 0 2.413)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -4.953)
+					(end 0 -5.207)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 3.81 2.667)
+					(end 2.54 2.413)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 3.81 0.127)
+					(end 2.54 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 3.81 -2.413)
+					(end 2.54 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 3.81 -4.953)
+					(end 2.54 -5.207)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at -5.08 2.54 0)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 7.62 2.54 180)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 3.81)
+					(name "Pin_3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 7.62 0 180)
+					(length 3.81)
+					(name "Pin_4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 0)
+					(length 3.81)
+					(name "Pin_5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 7.62 -2.54 180)
+					(length 3.81)
+					(name "Pin_6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -5.08 0)
+					(length 3.81)
+					(name "Pin_7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 7.62 -5.08 180)
+					(length 3.81)
+					(name "Pin_8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "power:+3V3"
+			(power global)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "#PWR"
+				(at 0 -3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "+3V3"
+				(at 0 3.556 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"+3V3\""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "+3V3_0_1"
+				(polyline
+					(pts
+						(xy -0.762 1.27) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 2.54) (xy 0.762 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "+3V3_1_1"
+				(pin power_in line
+					(at 0 0 90)
+					(length 0)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "power:GND"
+			(power global)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "GND"
+				(at 0 -3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "GND_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GND_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	)
+	(junction
+		(at 127 87.63)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "083a08da-d901-47d8-bf27-41397f5a612d")
+	)
+	(junction
+		(at 148.59 82.55)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "3620429e-766d-4171-9cd8-fc955d66603e")
+	)
+	(junction
+		(at 127 82.55)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "3dbaad44-ad14-468a-96af-ae44a09ed8e9")
+	)
+	(junction
+		(at 149.86 90.17)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "5f93c5f3-107d-4941-b8c2-35997205781b")
+	)
+	(junction
+		(at 148.59 87.63)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "655b4815-2c03-4a5a-9bec-2962f6eebe4e")
+	)
+	(junction
+		(at 127 85.09)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "7d6df715-06ac-4c0a-b988-51c5a8786468")
+	)
+	(junction
+		(at 132.08 90.17)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d4f2ea49-d774-43cf-97c1-15567739cfe7")
+	)
+	(junction
+		(at 149.86 85.09)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "f8d60d4f-9bfe-405e-a818-2576bdba591e")
+	)
+	(wire
+		(pts
+			(xy 151.13 85.09) (xy 149.86 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0b19b6f1-8948-4e71-b14b-fe057252635d")
+	)
+	(wire
+		(pts
+			(xy 132.08 90.17) (xy 132.08 92.71)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0c28ec55-4cd5-4378-9f7d-23406b1ab185")
+	)
+	(wire
+		(pts
+			(xy 127 82.55) (xy 125.73 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0ff68d82-2d69-4fc6-bfba-48841fb3c586")
+	)
+	(wire
+		(pts
+			(xy 147.32 82.55) (xy 148.59 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1f149999-64a6-47b8-92c7-08ed1fe5fec0")
+	)
+	(wire
+		(pts
+			(xy 127 86.36) (xy 127 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "21e101db-4097-4c1e-a587-5ea957d7b3b3")
+	)
+	(wire
+		(pts
+			(xy 148.59 82.55) (xy 148.59 80.01)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "27a9ff19-5151-4526-b8c3-63e11cc65b57")
+	)
+	(wire
+		(pts
+			(xy 127 85.09) (xy 134.62 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2b3f69ae-841b-41a4-8bb1-4b8afb39ec37")
+	)
+	(wire
+		(pts
+			(xy 148.59 82.55) (xy 151.13 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4941b0bd-700b-491a-b2ca-33d3418aec52")
+	)
+	(wire
+		(pts
+			(xy 148.59 87.63) (xy 148.59 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5a8cfd0a-3ca5-4495-a800-59717bc494a7")
+	)
+	(wire
+		(pts
+			(xy 127 82.55) (xy 134.62 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "75f2e606-8090-4dba-ad4b-64af12fccaeb")
+	)
+	(wire
+		(pts
+			(xy 116.84 83.82) (xy 127 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "80f3d7c3-670d-40ab-af4a-48ecde1b3c82")
+	)
+	(wire
+		(pts
+			(xy 149.86 86.36) (xy 149.86 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "89fe452c-3cf6-427e-915b-d0aea777cd2b")
+	)
+	(wire
+		(pts
+			(xy 134.62 90.17) (xy 132.08 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8d310674-d3e4-4753-a927-b79eb7e58072")
+	)
+	(wire
+		(pts
+			(xy 149.86 91.44) (xy 149.86 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "967624e5-4cf7-4863-80ee-a372f28de0d7")
+	)
+	(wire
+		(pts
+			(xy 160.02 86.36) (xy 149.86 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "96926969-9f7f-49d9-989f-df9aa90e90e7")
+	)
+	(wire
+		(pts
+			(xy 149.86 90.17) (xy 147.32 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "98c1a5dc-f65e-4125-8bce-f2914fe96449")
+	)
+	(wire
+		(pts
+			(xy 160.02 91.44) (xy 149.86 91.44)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "af00c45f-bae9-4213-ae8a-3051a626ca12")
+	)
+	(wire
+		(pts
+			(xy 127 83.82) (xy 127 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b724a73f-e31c-4976-a729-2d40bdcabe6c")
+	)
+	(wire
+		(pts
+			(xy 149.86 85.09) (xy 147.32 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b735ddd7-3059-4fc9-bc24-488bc1de9e80")
+	)
+	(wire
+		(pts
+			(xy 148.59 87.63) (xy 151.13 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ba05c1dc-1bde-4715-b5e9-c6e78d870974")
+	)
+	(wire
+		(pts
+			(xy 127 87.63) (xy 127 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ba33af39-5acd-494e-93ab-41d63c8da825")
+	)
+	(wire
+		(pts
+			(xy 151.13 90.17) (xy 149.86 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "baadf99d-0062-43fb-8e13-d900759c0015")
+	)
+	(wire
+		(pts
+			(xy 147.32 87.63) (xy 148.59 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bcdd2a54-3337-4a0a-9110-561be0c9c437")
+	)
+	(wire
+		(pts
+			(xy 125.73 90.17) (xy 132.08 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "be1fcec5-8455-48a1-99e8-299e3b99349b")
+	)
+	(wire
+		(pts
+			(xy 116.84 88.9) (xy 127 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "daf4e3f6-1c5e-4663-addd-4d8906060e08")
+	)
+	(wire
+		(pts
+			(xy 116.84 86.36) (xy 127 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e73dfda3-3f79-4edd-8280-bc99700fe8aa")
+	)
+	(wire
+		(pts
+			(xy 127 85.09) (xy 125.73 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e83c0d97-6a3a-4d32-a792-a29c80db88de")
+	)
+	(wire
+		(pts
+			(xy 127 87.63) (xy 134.62 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f009c0c0-ad32-4d86-a449-61db8bfe4730")
+	)
+	(wire
+		(pts
+			(xy 125.73 87.63) (xy 127 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f312233f-b46d-4992-86ef-2299f39e7273")
+	)
+	(hierarchical_label "RST"
+		(shape input)
+		(at 160.02 86.36 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7cbc7ad6-8820-4992-a4d4-9fa347626395")
+	)
+	(hierarchical_label "IO0"
+		(shape input)
+		(at 116.84 86.36 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "931d1020-6e2a-4001-8b81-5935c8eb61e7")
+	)
+	(hierarchical_label "TX"
+		(shape output)
+		(at 160.02 91.44 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ccdda91a-513c-4bb9-8b73-ee9cb0f705bd")
+	)
+	(hierarchical_label "RX"
+		(shape input)
+		(at 116.84 83.82 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d2f47eb0-7fd1-4376-be86-04be20314569")
+	)
+	(hierarchical_label "IO2"
+		(shape input)
+		(at 116.84 88.9 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f9352d9e-5ece-4bed-8740-d73a20fc6585")
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 151.13 87.63 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "18c484a6-78f2-4dee-801a-635524c19a98")
+		(property "Reference" "TP42"
+			(at 155.194 87.63 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 153.1621 90.17 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 151.13 92.71 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 151.13 92.71 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 151.13 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "9b915297-bc65-4640-9069-2130a62a9678")
+		)
+		(instances
+			(project "DMXion 4port node"
+				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370"
+					(reference "TP42")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 148.59 80.01 0)
+		(mirror y)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "2220880c-b1d1-47e7-bc69-bd5c114c2cda")
+		(property "Reference" "#PWR0140"
+			(at 148.59 83.82 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 148.59 74.93 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 148.59 80.01 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 148.59 80.01 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 148.59 80.01 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "0e9fdcf7-dac4-493b-90de-35e1bdb84fe1")
+		)
+		(instances
+			(project "DMXion 4port node"
+				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370"
+					(reference "#PWR0140")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 125.73 82.55 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "5245b499-ffef-4329-ad52-3104a4ff4038")
+		(property "Reference" "TP37"
+			(at 121.666 82.55 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 123.6979 80.01 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 125.73 77.47 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 125.73 77.47 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 125.73 82.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "583503fe-9dc4-4be1-ba4c-9971d574890c")
+		)
+		(instances
+			(project "DMXion 4port node"
+				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370"
+					(reference "TP37")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 125.73 87.63 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "59f2658b-4cd5-487c-8e41-bd8f7af48db1")
+		(property "Reference" "TP41"
+			(at 121.666 87.63 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 123.6979 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 125.73 82.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 125.73 82.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 125.73 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "930b0443-ff0b-4996-9a7b-eb037ab4016d")
+		)
+		(instances
+			(project "DMXion 4port node"
+				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370"
+					(reference "TP41")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 132.08 92.71 0)
+		(mirror y)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5baafc88-81fe-470c-a9d5-355fc226e57b")
+		(property "Reference" "#PWR0141"
+			(at 132.08 99.06 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 132.08 97.79 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 132.08 92.71 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 132.08 92.71 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 132.08 92.71 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "2997b426-fbb2-4882-8fa5-69e41d780658")
+		)
+		(instances
+			(project "DMXion 4port node"
+				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370"
+					(reference "#PWR0141")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_02x04_Odd_Even")
+		(at 139.7 87.63 0)
+		(mirror x)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "60cb9b8b-7741-46c4-9a0b-84322c28b7fc")
+		(property "Reference" "J13"
+			(at 140.97 96.52 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Conn_02x04"
+			(at 140.97 93.98 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_2x04_P2.54mm_Vertical"
+			(at 139.7 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 139.7 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Generic connector, double row, 02x04, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 139.7 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "KLC_S3.3" ""
+			(at 139.7 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "KLC_S4.1" ""
+			(at 139.7 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "KLC_S4.2_DVDD" ""
+			(at 139.7 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "KLC_S4.2_VREG_LX" ""
+			(at 139.7 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "9e783d25-d49f-44f3-a5cc-90d38da8eeba")
+		)
+		(pin "6"
+			(uuid "aff786b1-3303-4264-ad38-be096955ea3b")
+		)
+		(pin "2"
+			(uuid "7cc57674-79b4-44ca-9a23-a8cbbc4e5478")
+		)
+		(pin "8"
+			(uuid "dcb38b2d-8701-4782-bbec-fbfd2659937c")
+		)
+		(pin "3"
+			(uuid "c9960d7e-9267-4254-b6bf-9720ca19ea0b")
+		)
+		(pin "5"
+			(uuid "5f673f51-06aa-4e6c-aedf-52b431edca23")
+		)
+		(pin "7"
+			(uuid "c41076fa-95ad-4dff-a7fd-1a1314371cd9")
+		)
+		(pin "4"
+			(uuid "bedb8099-bf21-4a16-a1f3-5758ab38427d")
+		)
+		(instances
+			(project "DMXion 4port node"
+				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370"
+					(reference "J13")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 125.73 90.17 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "7f2e2f44-c53e-4f80-81c4-7406fd3d717d")
+		(property "Reference" "TP43"
+			(at 121.666 90.17 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 123.6979 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 125.73 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 125.73 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 125.73 90.17 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "4e743b15-e972-4dff-8645-7cebf0b5188e")
+		)
+		(instances
+			(project "DMXion 4port node"
+				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370"
+					(reference "TP43")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 151.13 85.09 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "8225ef35-99c5-43ad-8d0b-66f74ec7fa3e")
+		(property "Reference" "TP40"
+			(at 155.194 85.09 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 153.1621 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 151.13 90.17 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 151.13 90.17 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 151.13 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "4f8f79e4-1074-4bc0-ad52-16cec0fe43d2")
+		)
+		(instances
+			(project "DMXion 4port node"
+				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370"
+					(reference "TP40")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 125.73 85.09 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "856a4776-57c6-4688-b16e-6355a7f7e13a")
+		(property "Reference" "TP39"
+			(at 121.666 85.09 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 123.6979 82.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 125.73 80.01 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 125.73 80.01 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 125.73 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "0a046279-e580-43d0-bda5-bbd35c40e2d5")
+		)
+		(instances
+			(project "DMXion 4port node"
+				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370"
+					(reference "TP39")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 151.13 90.17 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "ae5ac799-5173-4e22-9b79-a6c3ca25cbe5")
+		(property "Reference" "TP44"
+			(at 155.194 90.17 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 153.1621 92.71 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 151.13 95.25 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 151.13 95.25 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 151.13 90.17 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "771438fd-9975-4423-a7ab-f3a18c44b863")
+		)
+		(instances
+			(project "DMXion 4port node"
+				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370"
+					(reference "TP44")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 151.13 82.55 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "b540e4d7-67f3-48fd-b663-65276a3da04e")
+		(property "Reference" "TP38"
+			(at 155.194 82.55 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 153.1621 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 151.13 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 151.13 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 151.13 82.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "7e498ec8-fa7f-4fb6-b7a8-912975da65f2")
+		)
+		(instances
+			(project "DMXion 4port node"
+				(path "/7d5b1976-98b3-4e47-ae52-3fe360235ea3/a6dafa22-90bf-43fa-b3bd-bb5c9d6a5370"
+					(reference "TP38")
+					(unit 1)
+				)
+			)
+		)
+	)
+)

@@ -802,13 +802,13 @@
         "uuid": "7d5b1976-98b3-4e47-ae52-3fe360235ea3"
       }
     ],
-    "used_designators": "",
+    "used_designators": "TP45-60",
     "variants": []
   },
   "sheets": [
     [
       "7d5b1976-98b3-4e47-ae52-3fe360235ea3",
-      "Artnet_DMX_Converter"
+      "DMXion 4port node"
     ],
     [
       "2921cc92-dcd0-49e8-8f4d-99de377e582e",
