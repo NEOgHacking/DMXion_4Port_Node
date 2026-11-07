@@ -9,4 +9,5 @@ bool chargerStart(
     int charge_current
 );
 
-float getVbat();
+bool getVbat(float &voltage);
+bool getChargeStatus(uint8_t &status);

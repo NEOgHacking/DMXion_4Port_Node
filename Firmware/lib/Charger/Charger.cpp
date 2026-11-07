@@ -39,8 +39,10 @@ bool chargerStart(McciCatenaNpm1300::cNPM1300::Ntc ntc_fitted, McciCatenaNpm1300
     }
 }
 
-float getVbat() {
-    float Vbat;
-    gNpm1300.measureVbat(Vbat);
-    return Vbat;
+bool getVbat(float &voltage) {
+    return gNpm1300.measureVbat(voltage);
+}
+
+bool getChargeStatus(uint8_t &status) {
+    return gNpm1300.getChargeStatus(status);
 }
