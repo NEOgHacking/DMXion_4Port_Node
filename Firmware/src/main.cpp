@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include <Charger.h>
-#include <ArtnetEther.h>
 #include <Ethernet.h>
 #include <SPI.h>
 #include <Adafruit_NeoPixel.h>
@@ -16,12 +15,22 @@
 // Configurables
 #define DMX_SPEED 30 // In hertz
 constexpr uint16_t MAX_ARTNET_UNIVERSE = 0x7FFF;
+constexpr uint16_t ARTNET_PORT = 6454;
+constexpr size_t ARTNET_PACKET_MAX_SIZE = 530;
+constexpr uint16_t SACN_PORT = 5568;
+constexpr size_t SACN_PACKET_MAX_SIZE = 638;
 constexpr uint32_t CONFIG_MAGIC = 0x444D5831;
 constexpr uint32_t BACKLIGHT_TIMEOUT_MS = 60000;
 constexpr uint32_t ENCODER_HOLD_MS = 650;
 constexpr uint8_t ENCODER_A = 8;
 constexpr uint8_t ENCODER_B = 9;
 constexpr uint8_t ENCODER_SWITCH = 7;
+constexpr uint8_t DEFAULT_UNIVERSE_TIMEOUT_SECONDS = 10;
+constexpr uint8_t DEFAULT_LED_BRIGHTNESS_PERCENT = 39;
+constexpr uint8_t DEFAULT_LCD_BRIGHTNESS_PERCENT = 100;
+constexpr uint8_t DEFAULT_LCD_TIMEOUT_SECONDS = BACKLIGHT_TIMEOUT_MS / 1000;
+constexpr uint8_t SETTINGS_VERSION = 1;
+constexpr uint8_t SETTINGS_MAIN_OUTPUT = 5;
 
 
 // Standard definitions
@@ -54,6 +63,7 @@ std::atomic<bool> network_pause_requested{false};
 std::atomic<bool> network_paused{false};
 std::atomic<bool> network_reconfigure_requested{false};
 std::atomic<bool> network_reconfiguration_pending{false};
+std::atomic<bool> sacn_reconfigure_requested{false};
 std::atomic<bool> dhcp_enabled{false};
 std::atomic<bool> dhcp_lease_acquired{false};
 std::atomic<bool> link_led_on{false};
@@ -82,12 +92,20 @@ struct StoredConfiguration {
     uint8_t enabled_mask;
     uint8_t ip_address[4];
     uint8_t dhcp_enabled;
+    uint8_t settings_version;
+    uint8_t universe_timeout_seconds;
+    uint8_t led_brightness_percent;
+    uint8_t lcd_brightness_percent;
+    uint8_t lcd_timeout_seconds;
+    uint8_t led_color_indices[5];
 };
 
 enum class InterfaceMode : uint8_t {
     SelectOutput,
     EditUniverse,
-    EditIp
+    EditIp,
+    SettingsMenu,
+    EditSetting
 };
 
 InterfaceMode interface_mode = InterfaceMode::SelectOutput;
@@ -95,6 +113,17 @@ uint8_t selected_output = 0;
 uint16_t edited_universe = 0;
 uint8_t edited_ip[4] = {};
 uint8_t edited_ip_octet = 0;
+uint8_t universe_timeout_seconds = DEFAULT_UNIVERSE_TIMEOUT_SECONDS;
+uint8_t led_brightness_percent = DEFAULT_LED_BRIGHTNESS_PERCENT;
+uint8_t lcd_brightness_percent = DEFAULT_LCD_BRIGHTNESS_PERCENT;
+uint8_t lcd_timeout_seconds = DEFAULT_LCD_TIMEOUT_SECONDS;
+uint8_t led_color_indices[5] = {0, 3, 5, 7, 7};
+uint8_t settings_category = 0;
+uint8_t settings_menu_index = 0;
+uint8_t edited_setting_index = 0;
+uint8_t original_setting_value = 0;
+bool settings_root_menu = true;
+bool edit_ip_returns_to_settings = false;
 bool configuration_saved = true;
 uint32_t last_user_activity = 0;
 uint32_t last_interface_stats_update = 0;
@@ -109,12 +138,51 @@ DmxOutput universes[4];
 
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
-ArtnetEtherReceiver artnet;
+EthernetUDP artnet_receiver;
+EthernetUDP sacn_receivers[4];
+uint16_t sacn_receiver_universes[4] = {};
+bool sacn_receiver_active[4] = {};
 
 byte mac[] = { 0x02, 0x44, 0x4D, 0x58, 0x00, 0x01 };
 IPAddress ip(192, 168, 2, 212);  // Set to an unused address on your Art-Net network
 
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
+
+struct StatusColor {
+    const char *name;
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
+};
+
+constexpr StatusColor STATUS_COLORS[] = {
+    {"RED", 255, 0, 0},
+    {"ORANGE", 255, 96, 0},
+    {"YELLOW", 255, 180, 0},
+    {"GREEN", 0, 255, 0},
+    {"CYAN", 0, 180, 255},
+    {"BLUE", 0, 0, 255},
+    {"MAGENTA", 255, 0, 180},
+    {"WHITE", 255, 255, 255}
+};
+constexpr uint8_t STATUS_COLOR_COUNT =
+    sizeof(STATUS_COLORS) / sizeof(STATUS_COLORS[0]);
+
+void applyLedBrightness() {
+    strip.setBrightness(static_cast<uint8_t>(
+        (static_cast<uint16_t>(led_brightness_percent) * 255 + 50) / 100));
+}
+
+void applyLcdBrightness() {
+    const uint8_t pwm_value = backlight_is_on ?
+        static_cast<uint8_t>((static_cast<uint16_t>(lcd_brightness_percent) * 255 + 50) / 100) : 0;
+    analogWrite(TFT_BACKLIGHT, pwm_value);
+}
+
+void setStatusColor(uint8_t pixel, uint8_t role) {
+    const StatusColor &color = STATUS_COLORS[led_color_indices[role]];
+    strip.setPixelColor(pixel, color.red, color.green, color.blue);
+}
 
 bool sendDMX(__unused repeating_timer *rt) {
     for(int i = 0; i < 4; i++) {
@@ -182,13 +250,9 @@ void updateBatteryMeasurement() {
     }
 }
 
-void onArtNET(const uint8_t *data, uint16_t size, const art_net::art_dmx::Metadata &metadata, __unused const art_net::RemoteInfo &remote) {
+void applyDmxData(uint16_t received_universe, const uint8_t *data, uint16_t size) {
     const uint16_t data_size = size < UNIVERSE_LENGTH ? size : UNIVERSE_LENGTH;
     const uint32_t received_at = millis();
-    const uint16_t received_universe =
-        (static_cast<uint16_t>(metadata.net) << 8) |
-        (static_cast<uint16_t>(metadata.subnet) << 4) |
-        metadata.universe;
 
     for(int i = 0; i < 4; i++) {
         critical_section_enter_blocking(&frame_lock);
@@ -203,6 +267,169 @@ void onArtNET(const uint8_t *data, uint16_t size, const art_net::art_dmx::Metada
             activity_active[i] = true;
         }
         critical_section_exit(&frame_lock);
+    }
+}
+
+uint16_t readBigEndian16(const uint8_t *data) {
+    return (static_cast<uint16_t>(data[0]) << 8) | data[1];
+}
+
+void beginArtNetReceiver() {
+    if(!artnet_receiver.begin(ARTNET_PORT)) {
+        Serial.println(F("Failed to bind Art-Net UDP port 6454"));
+    }
+}
+
+void receiveArtNetPackets() {
+    uint8_t packet[ARTNET_PACKET_MAX_SIZE];
+    for(uint8_t processed = 0; processed < 4; processed++) {
+        const int packet_size = artnet_receiver.parsePacket();
+        if(packet_size <= 0) {
+            return;
+        }
+        if(packet_size > static_cast<int>(sizeof(packet))) {
+            artnet_receiver.read(static_cast<uint8_t *>(nullptr), packet_size);
+            continue;
+        }
+
+        const int bytes_read = artnet_receiver.read(packet, packet_size);
+        if(bytes_read != packet_size ||
+           packet_size < 18 ||
+           std::memcmp(packet, "Art-Net\0", 8) != 0 ||
+           packet[8] != 0x00 || packet[9] != 0x50 ||
+           readBigEndian16(packet + 10) < 14) {
+            continue;
+        }
+
+        const uint16_t data_size = readBigEndian16(packet + 16);
+        if(data_size == 0 || data_size > UNIVERSE_LENGTH ||
+           (data_size & 1) != 0 ||
+           packet_size < 18 + data_size) {
+            continue;
+        }
+
+        const uint16_t received_universe =
+            (static_cast<uint16_t>(packet[15] & 0x7F) << 8) | packet[14];
+        applyDmxData(received_universe, packet + 18, data_size);
+    }
+}
+
+uint32_t readBigEndian32(const uint8_t *data) {
+    return (static_cast<uint32_t>(data[0]) << 24) |
+           (static_cast<uint32_t>(data[1]) << 16) |
+           (static_cast<uint32_t>(data[2]) << 8) |
+           data[3];
+}
+
+bool validSacnPduLength(const uint8_t *packet, size_t packet_size, size_t offset) {
+    if(packet_size < offset + 2) {
+        return false;
+    }
+    const uint16_t pdu_length = readBigEndian16(packet + offset);
+    return (pdu_length & 0xF000) == 0x7000 &&
+           (pdu_length & 0x0FFF) == packet_size - offset;
+}
+
+void onSacnPacket(const uint8_t *packet, size_t packet_size,
+                  uint16_t subscribed_universe) {
+    constexpr size_t root_layer_offset = 16;
+    constexpr size_t framing_layer_offset = 38;
+    constexpr size_t dmp_layer_offset = 115;
+    constexpr size_t start_code_offset = 125;
+
+    if(packet_size < start_code_offset + 1 ||
+       packet[0] != 0x00 || packet[1] != 0x10 ||
+       packet[2] != 0x00 || packet[3] != 0x00 ||
+       std::memcmp(packet + 4, "ASC-E1.17\0\0\0", 12) != 0 ||
+       !validSacnPduLength(packet, packet_size, root_layer_offset) ||
+       readBigEndian32(packet + 18) != 0x00000004 ||
+       !validSacnPduLength(packet, packet_size, framing_layer_offset) ||
+       readBigEndian32(packet + 40) != 0x00000002 ||
+       !validSacnPduLength(packet, packet_size, dmp_layer_offset) ||
+       packet[117] != 0x02 || packet[118] != 0xA1 ||
+       readBigEndian16(packet + 119) != 0 ||
+       readBigEndian16(packet + 121) != 1 ||
+       (packet[112] & 0xC0) != 0 ||
+       packet[start_code_offset] != 0) {
+        return;
+    }
+
+    const uint16_t property_value_count = readBigEndian16(packet + 123);
+    if(property_value_count == 0 || property_value_count > UNIVERSE_LENGTH + 1 ||
+       packet_size != start_code_offset + property_value_count) {
+        return;
+    }
+
+    const uint16_t sacn_universe = readBigEndian16(packet + 113);
+    if(sacn_universe == 0 || sacn_universe > 63999 ||
+       sacn_universe != subscribed_universe) {
+        return;
+    }
+
+    // The device's displayed universe is Art-Net's zero-based universe number.
+    applyDmxData(sacn_universe - 1, packet + start_code_offset + 1,
+                 property_value_count - 1);
+}
+
+void stopSacnReceivers() {
+    for(uint8_t i = 0; i < 4; i++) {
+        sacn_receivers[i].stop();
+        sacn_receiver_active[i] = false;
+    }
+}
+
+void beginSacnReceivers() {
+    stopSacnReceivers();
+    for(uint8_t output = 0; output < 4; output++) {
+        uint16_t artnet_universe;
+        critical_section_enter_blocking(&frame_lock);
+        artnet_universe = connector_universe[output];
+        critical_section_exit(&frame_lock);
+        const uint16_t sacn_universe = artnet_universe + 1;
+
+        bool already_subscribed = false;
+        for(uint8_t receiver = 0; receiver < output; receiver++) {
+            if(sacn_receiver_active[receiver] &&
+               sacn_receiver_universes[receiver] == sacn_universe) {
+                already_subscribed = true;
+                break;
+            }
+        }
+        if(already_subscribed) {
+            continue;
+        }
+
+        const IPAddress multicast_group(239, 255,
+                                        static_cast<uint8_t>(sacn_universe >> 8),
+                                        static_cast<uint8_t>(sacn_universe));
+        if(sacn_receivers[output].beginMulticast(multicast_group, SACN_PORT)) {
+            sacn_receiver_universes[output] = sacn_universe;
+            sacn_receiver_active[output] = true;
+        } else {
+            Serial.print(F("Failed to join sACN universe "));
+            Serial.println(sacn_universe);
+        }
+    }
+}
+
+void receiveSacnPackets() {
+    uint8_t packet[SACN_PACKET_MAX_SIZE];
+    for(uint8_t i = 0; i < 4; i++) {
+        if(!sacn_receiver_active[i]) {
+            continue;
+        }
+
+        const int packet_size = sacn_receivers[i].parsePacket();
+        if(packet_size <= 0) {
+            continue;
+        }
+        const size_t bytes_to_read = packet_size < static_cast<int>(sizeof(packet)) ?
+                                     packet_size : sizeof(packet);
+        const int bytes_read = sacn_receivers[i].read(packet, bytes_to_read);
+        if(bytes_read > 0) {
+            onSacnPacket(packet, static_cast<size_t>(bytes_read),
+                         sacn_receiver_universes[i]);
+        }
     }
 }
 
@@ -234,19 +461,35 @@ void updateStatusLeds() {
     critical_section_exit(&frame_lock);
 
     for(int i = 0; i < 4; i++) {
-        const bool has_recent_packet =
-            has_received[i] && static_cast<uint32_t>(now - packet_times[i]) <= 10000;
+        const bool has_recent_packet = has_received[i] &&
+            static_cast<uint32_t>(now - packet_times[i]) <=
+                static_cast<uint32_t>(universe_timeout_seconds) * 1000;
         keep_sending[i].store(output_enabled[i] && has_recent_packet, std::memory_order_relaxed);
-        strip.setPixelColor((7 - 2 * i),
-                            output_enabled[i] && !has_recent_packet ? 255 : 0,
-                            output_enabled[i] && has_recent_packet ? 255 : 0,
-                            0);
-        strip.setPixelColor((6 - 2 * i), 0, 0, packet_activity[i] ? 255 : 0);
+        if(output_enabled[i]) {
+            setStatusColor(7 - 2 * i, has_recent_packet ? 1 : 0);
+        } else {
+            strip.setPixelColor(7 - 2 * i, 0);
+        }
+        if(packet_activity[i]) {
+            setStatusColor(6 - 2 * i, 2);
+        } else {
+            strip.setPixelColor(6 - 2 * i, 0);
+        }
     }
+    link_led_on.store(gpio_get(LINKLED) == 0, std::memory_order_relaxed);
+    act_led_on.store(gpio_get(ACTLED) == 0, std::memory_order_relaxed);
     const bool link_on = link_led_on.load(std::memory_order_relaxed);
     const bool act_on = act_led_on.load(std::memory_order_relaxed);
-    strip.setPixelColor(8, link_on ? 255 : 0, link_on ? 255 : 0, link_on ? 255 : 0);
-    strip.setPixelColor(9, act_on ? 255 : 0, act_on ? 255 : 0, act_on ? 255 : 0);
+    if(link_on) {
+        setStatusColor(8, 3);
+    } else {
+        strip.setPixelColor(8, 0);
+    }
+    if(act_on) {
+        setStatusColor(9, 4);
+    } else {
+        strip.setPixelColor(9, 0);
+    }
 }
 
 bool validStoredConfiguration(const StoredConfiguration &config) {
@@ -256,6 +499,26 @@ bool validStoredConfiguration(const StoredConfiguration &config) {
 
     for(uint8_t i = 0; i < 4; i++) {
         if(config.universes[i] > MAX_ARTNET_UNIVERSE) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool validStoredSettings(const StoredConfiguration &config) {
+    if(config.settings_version != SETTINGS_VERSION ||
+       config.universe_timeout_seconds == 0 ||
+       config.universe_timeout_seconds > 60 ||
+       config.led_brightness_percent > 100 ||
+       config.lcd_brightness_percent < 10 ||
+       config.lcd_brightness_percent > 100 ||
+       config.lcd_timeout_seconds == 0 ||
+       config.lcd_timeout_seconds > 60) {
+        return false;
+    }
+
+    for(uint8_t i = 0; i < 5; i++) {
+        if(config.led_color_indices[i] >= STATUS_COLOR_COUNT) {
             return false;
         }
     }
@@ -284,6 +547,14 @@ void loadConfiguration() {
         ip = configured_ip;
     }
     dhcp_enabled.store(stored.dhcp_enabled == 1, std::memory_order_relaxed);
+    if(validStoredSettings(stored)) {
+        universe_timeout_seconds = stored.universe_timeout_seconds;
+        led_brightness_percent = stored.led_brightness_percent;
+        lcd_brightness_percent = stored.lcd_brightness_percent;
+        lcd_timeout_seconds = stored.lcd_timeout_seconds;
+        std::memcpy(led_color_indices, stored.led_color_indices,
+                    sizeof(led_color_indices));
+    }
 }
 
 void saveConfiguration() {
@@ -297,6 +568,13 @@ void saveConfiguration() {
         stored.ip_address[i] = configured_ip[i];
     }
     stored.dhcp_enabled = dhcp_enabled.load(std::memory_order_relaxed) ? 1 : 0;
+    stored.settings_version = SETTINGS_VERSION;
+    stored.universe_timeout_seconds = universe_timeout_seconds;
+    stored.led_brightness_percent = led_brightness_percent;
+    stored.lcd_brightness_percent = lcd_brightness_percent;
+    stored.lcd_timeout_seconds = lcd_timeout_seconds;
+    std::memcpy(stored.led_color_indices, led_color_indices,
+                sizeof(led_color_indices));
 
     EEPROM.put(0, stored);
     configuration_saved = EEPROM.commit();
@@ -383,7 +661,9 @@ void drawOutputRow(uint8_t output) {
     tft.print(output + 1);
     tft.print(F("  U: "));
     if(interface_mode == InterfaceMode::EditUniverse && selected) {
+        tft.setTextColor(ST77XX_BLACK, ST77XX_YELLOW);
         tft.print(edited_universe);
+        tft.setTextColor(ST77XX_YELLOW);
     } else {
         tft.print(universe);
     }
@@ -395,6 +675,18 @@ void drawOutputRow(uint8_t output) {
 }
 
 void drawIpRow() {
+    if(selected_output == SETTINGS_MAIN_OUTPUT) {
+        tft.fillRect(5, 218, 310, 20, 0x2104);
+        tft.drawRect(5, 218, 310, 20, ST77XX_YELLOW);
+        tft.setTextSize(1);
+        tft.setTextColor(ST77XX_YELLOW);
+        tft.setCursor(10, 224);
+        tft.print(F("DEVICE SETTINGS"));
+        tft.setCursor(190, 224);
+        tft.print(F("HOLD TO OPEN"));
+        return;
+    }
+
     const bool selected = selected_output == 4;
     const uint16_t background = selected ? 0x2104 : ST77XX_BLACK;
     tft.fillRect(5, 218, 310, 20, background);
@@ -463,7 +755,8 @@ void drawOutputStats(uint8_t output) {
     tft.fillRect(10, y + 19, 294, 13, background);
     tft.setCursor(10, y + 21);
     const uint32_t age = has_received ? millis() - last_packet : 0;
-    const bool packet_stale = !has_received || age >= 10000;
+    const bool packet_stale = !has_received ||
+        age > static_cast<uint32_t>(universe_timeout_seconds) * 1000;
     tft.setTextColor(packet_stale ? ST77XX_RED :
                      (enabled ? ST77XX_WHITE : 0xC618));
     tft.print(F("RX "));
@@ -477,7 +770,198 @@ void drawOutputStats(uint8_t output) {
     }
 }
 
+const char *settingsCategoryName(uint8_t category) {
+    switch(category) {
+        case 0: return "DISPLAY";
+        case 1: return "DMX OUTPUTS";
+        case 2: return "STATUS LEDS";
+        default: return "NETWORK";
+    }
+}
+
+uint8_t settingsCategoryItemCount(uint8_t category) {
+    switch(category) {
+        case 0: return 2;
+        case 1: return 1;
+        case 2: return 6;
+        default: return 2;
+    }
+}
+
+const char *settingsItemName(uint8_t category, uint8_t item) {
+    switch(category) {
+        case 0:
+            return item == 0 ? "LCD brightness" : "LCD sleep timeout";
+        case 1:
+            return "Universe timeout";
+        case 2:
+            switch(item) {
+                case 0: return "LED brightness";
+                case 1: return "No signal color";
+                case 2: return "Signal color";
+                case 3: return "Packet activity";
+                case 4: return "Ethernet link";
+                default: return "Ethernet activity";
+            }
+        default:
+            return item == 0 ? "Static IP address" : "DHCP";
+    }
+}
+
+uint8_t getSettingValue() {
+    switch(settings_category) {
+        case 0:
+            return edited_setting_index == 0 ? lcd_brightness_percent :
+                                                lcd_timeout_seconds;
+        case 1:
+            return universe_timeout_seconds;
+        default:
+            return edited_setting_index == 0 ? led_brightness_percent :
+                led_color_indices[edited_setting_index - 1];
+    }
+}
+
+void setSettingValue(uint8_t value) {
+    switch(settings_category) {
+        case 0:
+            if(edited_setting_index == 0) {
+                lcd_brightness_percent = value;
+                applyLcdBrightness();
+            } else {
+                lcd_timeout_seconds = value;
+            }
+            break;
+        case 1:
+            universe_timeout_seconds = value;
+            break;
+        default:
+            if(edited_setting_index == 0) {
+                led_brightness_percent = value;
+                applyLedBrightness();
+            } else {
+                led_color_indices[edited_setting_index - 1] = value;
+            }
+            break;
+    }
+}
+
+void drawSettingsInterface() {
+    tft.fillScreen(ST77XX_BLACK);
+    tft.setTextSize(2);
+    tft.setTextColor(ST77XX_WHITE);
+    tft.setCursor(8, 7);
+    if(settings_root_menu) {
+        tft.print(F("SETTINGS"));
+    } else {
+        tft.print(settingsCategoryName(settings_category));
+    }
+    tft.drawFastHLine(5, 29, 310, ST77XX_CYAN);
+    tft.setTextSize(1);
+
+    if(interface_mode == InterfaceMode::EditSetting) {
+        const char *label = settingsItemName(settings_category, edited_setting_index);
+        tft.setTextColor(ST77XX_CYAN);
+        tft.setCursor(10, 50);
+        tft.print(label);
+        tft.setTextSize(2);
+        tft.setTextColor(ST77XX_YELLOW);
+        tft.setCursor(10, 84);
+        if((settings_category == 0 && edited_setting_index == 0) ||
+           (settings_category == 2 && edited_setting_index == 0)) {
+            tft.print(getSettingValue());
+            tft.print(F("%"));
+        } else if(settings_category == 2) {
+            const uint8_t color_index = getSettingValue();
+            tft.print(STATUS_COLORS[color_index].name);
+            tft.fillRect(10, 126, 48, 28,
+                         tft.color565(STATUS_COLORS[color_index].red,
+                                      STATUS_COLORS[color_index].green,
+                                      STATUS_COLORS[color_index].blue));
+        } else {
+            tft.print(getSettingValue());
+            tft.print(F(" sec"));
+        }
+        tft.setTextSize(1);
+        tft.setTextColor(ST77XX_WHITE);
+        tft.setCursor(10, 190);
+        tft.print(F("ROTATE TO CHANGE"));
+        tft.setCursor(10, 208);
+        tft.print(F("CLICK SAVE / HOLD CANCEL"));
+    } else {
+        const uint8_t item_count = settings_root_menu ? 5 :
+                                   settingsCategoryItemCount(settings_category) + 1;
+        for(uint8_t item = 0; item < item_count; item++) {
+            const int16_t y = 37 + item * 27;
+            const bool selected = item == settings_menu_index;
+            if(selected) {
+                tft.fillRect(6, y - 2, 308, 23, 0x2104);
+                tft.drawRect(6, y - 2, 308, 23, ST77XX_YELLOW);
+            }
+            tft.setTextColor(selected ? ST77XX_YELLOW : ST77XX_WHITE);
+            tft.setCursor(12, y + 4);
+            if(settings_root_menu) {
+                switch(item) {
+                    case 0: tft.print(F("Display")); break;
+                    case 1: tft.print(F("DMX Outputs")); break;
+                    case 2: tft.print(F("Status LEDs")); break;
+                    case 3: tft.print(F("Network")); break;
+                    default: tft.print(F("Exit settings")); break;
+                }
+            } else if(item == settingsCategoryItemCount(settings_category)) {
+                tft.print(F("< Back"));
+            } else {
+                tft.print(settingsItemName(settings_category, item));
+                tft.setCursor(208, y + 4);
+                if(settings_category == 0 && item == 0) {
+                    tft.print(lcd_brightness_percent);
+                    tft.print(F("%"));
+                } else if(settings_category == 0) {
+                    tft.print(lcd_timeout_seconds);
+                    tft.print(F(" sec"));
+                } else if(settings_category == 1) {
+                    tft.print(universe_timeout_seconds);
+                    tft.print(F(" sec"));
+                } else if(settings_category == 2 && item == 0) {
+                    tft.print(led_brightness_percent);
+                    tft.print(F("%"));
+                } else if(settings_category == 2) {
+                    const uint8_t color_index = led_color_indices[item - 1];
+                    tft.setTextColor(tft.color565(STATUS_COLORS[color_index].red,
+                                                  STATUS_COLORS[color_index].green,
+                                                  STATUS_COLORS[color_index].blue));
+                    tft.print(STATUS_COLORS[color_index].name);
+                    tft.setTextColor(selected ? ST77XX_YELLOW : ST77XX_WHITE);
+                } else if(item == 0) {
+                    IPAddress current_ip;
+                    critical_section_enter_blocking(&frame_lock);
+                    current_ip = ip;
+                    critical_section_exit(&frame_lock);
+                    tft.print(current_ip);
+                } else {
+                    tft.print(dhcp_enabled.load(std::memory_order_relaxed) ?
+                              F("ON") : F("OFF"));
+                }
+            }
+        }
+        tft.setTextColor(ST77XX_CYAN);
+        tft.setCursor(8, 225);
+        tft.print(F("ROTATE SELECT / CLICK OPEN / HOLD BACK"));
+    }
+
+    if(!configuration_saved) {
+        tft.setTextColor(ST77XX_RED);
+        tft.setCursor(270, 8);
+        tft.print(F("SAVE ERR"));
+    }
+}
+
 void drawInterface(bool redraw_all) {
+    if(interface_mode == InterfaceMode::SettingsMenu ||
+       interface_mode == InterfaceMode::EditSetting) {
+        drawSettingsInterface();
+        return;
+    }
+
     if(redraw_all) {
         tft.fillScreen(ST77XX_BLACK);
     } else {
@@ -494,6 +978,8 @@ void drawInterface(bool redraw_all) {
         tft.print(F("CLICK NEXT / HOLD SAVE"));
     } else if(interface_mode == InterfaceMode::EditUniverse) {
         tft.print(F("CLICK: SAVE DMX U"));
+    } else if(selected_output == SETTINGS_MAIN_OUTPUT) {
+        tft.print(F("HOLD: DEVICE SETTINGS"));
     } else {
         tft.print(selected_output == 4 ? F("CLICK DHCP / HOLD IP") : F("HOLD: EDIT DMX U"));
     }
@@ -509,11 +995,13 @@ void drawInterface(bool redraw_all) {
 void recordUserActivity() {
     last_user_activity = millis();
     if(!backlight_is_on) {
-        digitalWrite(TFT_BACKLIGHT, HIGH);
         backlight_is_on = true;
+        applyLcdBrightness();
         drawInterface(true);
     }
 }
+
+void adjustSettingValue(int8_t direction);
 
 void handleEncoderRotation(int8_t direction) {
     recordUserActivity();
@@ -531,8 +1019,22 @@ void handleEncoderRotation(int8_t direction) {
         drawIpRow();
         return;
     }
+    if(interface_mode == InterfaceMode::EditSetting) {
+        adjustSettingValue(direction);
+        drawInterface(false);
+        return;
+    }
+    if(interface_mode == InterfaceMode::SettingsMenu) {
+        const uint8_t item_count = settings_root_menu ? 5 :
+                                   settingsCategoryItemCount(settings_category) + 1;
+        settings_menu_index = static_cast<uint8_t>(
+            (settings_menu_index + item_count + direction) % item_count);
+        drawInterface(false);
+        return;
+    }
 
-    selected_output = static_cast<uint8_t>((selected_output + 5 + direction) % 5);
+    selected_output = static_cast<uint8_t>(
+        (selected_output + 6 + direction) % 6);
     drawInterface(false);
 }
 
@@ -557,6 +1059,9 @@ void saveEditedUniverse() {
     critical_section_exit(&frame_lock);
     interface_mode = InterfaceMode::SelectOutput;
     saveConfiguration();
+    if(network_ready.load(std::memory_order_acquire)) {
+        sacn_reconfigure_requested.store(true, std::memory_order_release);
+    }
     drawInterface(false);
 }
 
@@ -617,9 +1122,106 @@ void toggleDhcp() {
 
 void saveEditedIp() {
     const bool saved = applyEditedIp();
-    interface_mode = InterfaceMode::SelectOutput;
+    interface_mode = edit_ip_returns_to_settings ? InterfaceMode::SettingsMenu :
+                                                   InterfaceMode::SelectOutput;
+    edit_ip_returns_to_settings = false;
     configuration_saved = saved;
     drawInterface(false);
+}
+
+void enterSettings() {
+    settings_root_menu = true;
+    settings_menu_index = 0;
+    interface_mode = InterfaceMode::SettingsMenu;
+    drawInterface(true);
+}
+
+void exitSettings() {
+    interface_mode = InterfaceMode::SelectOutput;
+    selected_output = SETTINGS_MAIN_OUTPUT;
+    drawInterface(true);
+}
+
+void openSettingsCategory(uint8_t category) {
+    settings_category = category;
+    settings_menu_index = 0;
+    settings_root_menu = false;
+    drawInterface(true);
+}
+
+void selectSettingsMenuItem() {
+    if(settings_root_menu) {
+        if(settings_menu_index < 4) {
+            openSettingsCategory(settings_menu_index);
+        } else {
+            exitSettings();
+        }
+        return;
+    }
+
+    const uint8_t item_count = settingsCategoryItemCount(settings_category);
+    if(settings_menu_index == item_count) {
+        settings_root_menu = true;
+        settings_menu_index = settings_category;
+        drawInterface(true);
+        return;
+    }
+
+    if(settings_category == 3 && settings_menu_index == 1) {
+        toggleDhcp();
+        return;
+    }
+    if(settings_category == 3) {
+        selected_output = 4;
+        edit_ip_returns_to_settings = true;
+        edited_ip[0] = configured_ip[0];
+        edited_ip[1] = configured_ip[1];
+        edited_ip[2] = configured_ip[2];
+        edited_ip[3] = configured_ip[3];
+        edited_ip_octet = 0;
+        interface_mode = InterfaceMode::EditIp;
+        drawInterface(true);
+        return;
+    }
+
+    edited_setting_index = settings_menu_index;
+    original_setting_value = getSettingValue();
+    interface_mode = InterfaceMode::EditSetting;
+    drawInterface(true);
+}
+
+void adjustSettingValue(int8_t direction) {
+    uint8_t value = getSettingValue();
+    if(settings_category == 2 && edited_setting_index > 0) {
+        value = static_cast<uint8_t>((value + STATUS_COLOR_COUNT + direction) %
+                                     STATUS_COLOR_COUNT);
+    } else {
+        const uint8_t minimum =
+            settings_category == 0 && edited_setting_index == 0 ? 10 :
+            (settings_category == 2 && edited_setting_index == 0 ? 0 : 1);
+        const uint8_t maximum =
+            settings_category == 0 && edited_setting_index == 0 ? 100 :
+            (settings_category == 2 ? 100 : 60);
+        if(direction > 0 && value < maximum) {
+            value++;
+        } else if(direction < 0 && value > minimum) {
+            value--;
+        }
+    }
+    setSettingValue(value);
+}
+
+void finishSettingEdit(bool save) {
+    if(!save) {
+        setSettingValue(original_setting_value);
+    } else {
+        saveConfiguration();
+        if(!configuration_saved) {
+            setSettingValue(original_setting_value);
+        }
+    }
+    interface_mode = InterfaceMode::SettingsMenu;
+    drawInterface(true);
 }
 
 void handleEncoder() {
@@ -672,12 +1274,21 @@ void handleEncoder() {
             recordUserActivity();
             if(button_mode_at_press == InterfaceMode::EditUniverse) {
                 saveEditedUniverse();
-            } else if(button_mode_at_press == InterfaceMode::EditIp) {
+            } else if(button_mode_at_press == InterfaceMode::EditIp &&
+                      !long_press_entered_edit) {
                 edited_ip_octet = static_cast<uint8_t>((edited_ip_octet + 1) % 4);
                 drawIpRow();
+            } else if(button_mode_at_press == InterfaceMode::EditSetting &&
+                      !long_press_entered_edit) {
+                finishSettingEdit(true);
+            } else if(button_mode_at_press == InterfaceMode::SettingsMenu &&
+                      !long_press_entered_edit) {
+                selectSettingsMenuItem();
             } else if(!long_press_entered_edit) {
                 if(selected_output == 4) {
                     toggleDhcp();
+                } else if(selected_output == SETTINGS_MAIN_OUTPUT) {
+                    // Settings are opened by a long press.
                 } else {
                     toggleSelectedOutput();
                 }
@@ -693,17 +1304,34 @@ void handleEncoder() {
             saveEditedIp();
             return;
         }
+        if(button_mode_at_press == InterfaceMode::EditSetting) {
+            finishSettingEdit(false);
+            return;
+        }
+        if(button_mode_at_press == InterfaceMode::SettingsMenu) {
+            if(settings_root_menu) {
+                exitSettings();
+            } else {
+                settings_root_menu = true;
+                settings_menu_index = settings_category;
+                drawInterface(true);
+            }
+            return;
+        }
         if(button_mode_at_press != InterfaceMode::SelectOutput) {
             return;
         }
 
         if(selected_output == 4) {
+            edit_ip_returns_to_settings = false;
             interface_mode = InterfaceMode::EditIp;
             edited_ip[0] = configured_ip[0];
             edited_ip[1] = configured_ip[1];
             edited_ip[2] = configured_ip[2];
             edited_ip[3] = configured_ip[3];
             edited_ip_octet = 0;
+        } else if(selected_output == SETTINGS_MAIN_OUTPUT) {
+            enterSettings();
         } else {
             interface_mode = InterfaceMode::EditUniverse;
             critical_section_enter_blocking(&frame_lock);
@@ -716,9 +1344,10 @@ void handleEncoder() {
 
 void updateBacklight() {
     if(backlight_is_on &&
-       static_cast<uint32_t>(millis() - last_user_activity) >= BACKLIGHT_TIMEOUT_MS) {
-        digitalWrite(TFT_BACKLIGHT, LOW);
+       static_cast<uint32_t>(millis() - last_user_activity) >=
+           static_cast<uint32_t>(lcd_timeout_seconds) * 1000) {
         backlight_is_on = false;
+        applyLcdBrightness();
     }
 }
 
@@ -765,28 +1394,28 @@ void setup() {
 
     // Configure the LEDs
     strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
-    strip.setBrightness(100);
+    applyLedBrightness();
     // Configure the display
     delay(500);
     SPI.setCS(TFT_CS);
     SPI.setTX(TFT_MOSI);
     SPI.setSCK(TFT_SCK);
     pinMode(TFT_BACKLIGHT, OUTPUT);
-    digitalWrite(TFT_BACKLIGHT, LOW);
+    analogWrite(TFT_BACKLIGHT, 0);
     tft.init(240, 320);
     tft.setRotation(3);
     tft.fillScreen(ST77XX_BLACK);
-    digitalWrite(TFT_BACKLIGHT, HIGH);
     backlight_is_on = true;
+    applyLcdBrightness();
 
     // Configure the DMX
     for(int i = 0; i < 4; i++) {
         pinMode(UNIVERSEOE[i], OUTPUT);
         digitalWrite(UNIVERSEOE[i], HIGH);
         if(i < 2) {
-            universes[i].begin(UNIVERSETX[i], pio1);
+            universes[i].begin(UNIVERSETX[i], pio0);
         } else {
-            universes[i].begin(UNIVERSETX[i], pio2);
+            universes[i].begin(UNIVERSETX[i], pio1);
         }
     }
     add_repeating_timer_ms(-(1000/DMX_SPEED), sendDMX, NULL, &interval_timer);
@@ -798,6 +1427,8 @@ void setup() {
     gpio_set_irq_enabled_with_callback(LINKLED, GPIO_IRQ_EDGE_FALL, true, onLED);
     gpio_set_irq_enabled_with_callback(ACTLED, GPIO_IRQ_EDGE_RISE, true, onLED);
     gpio_set_irq_enabled_with_callback(ACTLED, GPIO_IRQ_EDGE_FALL, true, onLED);
+    link_led_on.store(gpio_get(LINKLED) == 0, std::memory_order_relaxed);
+    act_led_on.store(gpio_get(ACTLED) == 0, std::memory_order_relaxed);
     SPI1.setCS(ETH_CS);
     SPI1.setTX(ETH_MOSI);
     SPI1.setRX(ETH_MISO);
@@ -826,9 +1457,8 @@ void setup() {
     } else {
         ethernet_link_up.store(Ethernet.linkStatus() == LinkON,
                                std::memory_order_relaxed);
-        // Start the artnet receiver on core 1.
-        artnet.begin();
-        artnet.subscribeArtDmx(onArtNET);
+        beginArtNetReceiver();
+        beginSacnReceivers();
         network_ready.store(true, std::memory_order_release);
     }
 
@@ -845,6 +1475,8 @@ void loop() {
 
     const uint32_t now = millis();
     if(backlight_is_on &&
+       interface_mode != InterfaceMode::SettingsMenu &&
+       interface_mode != InterfaceMode::EditSetting &&
        static_cast<uint32_t>(now - last_interface_stats_update) >= 500) {
         drawNetworkStatus();
         drawIpRow();
@@ -859,6 +1491,7 @@ void loop1() {
     static uint32_t last_dhcp_maintain = 0;
     static uint32_t last_dhcp_attempt = 0;
     if(network_reconfigure_requested.load(std::memory_order_acquire)) {
+        stopSacnReceivers();
         const bool request_dhcp = dhcp_enabled.load(std::memory_order_acquire);
         const bool lease_acquired = request_dhcp &&
                                     Ethernet.begin(mac, 8000, 3000) == 1;
@@ -878,7 +1511,9 @@ void loop1() {
             critical_section_exit(&frame_lock);
         }
         dhcp_lease_acquired.store(lease_acquired, std::memory_order_relaxed);
-        artnet.begin();
+        beginArtNetReceiver();
+        beginSacnReceivers();
+        sacn_reconfigure_requested.store(false, std::memory_order_release);
         ethernet_link_up.store(Ethernet.linkStatus() == LinkON, std::memory_order_relaxed);
         network_reconfigure_requested.store(false, std::memory_order_release);
         network_reconfiguration_pending.store(false, std::memory_order_release);
@@ -889,7 +1524,11 @@ void loop1() {
         delay(1);
     } else if(network_ready.load(std::memory_order_acquire)) {
         network_paused.store(false, std::memory_order_release);
-        artnet.parse();
+        if(sacn_reconfigure_requested.exchange(false, std::memory_order_acq_rel)) {
+            beginSacnReceivers();
+        }
+        receiveArtNetPackets();
+        receiveSacnPackets();
         static uint32_t last_link_check = 0;
         const uint32_t now = millis();
         if(static_cast<uint32_t>(now - last_link_check) >= 500) {
