@@ -1,61 +1,81 @@
 #include <Arduino.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_NeoPixel.h>
+#include <Adafruit_ST7789.h>
 #include <Charger.h>
+#include <DmxOutput.h>
+#include <EEPROM.h>
 #include <Ethernet.h>
 #include <SPI.h>
-#include <Adafruit_NeoPixel.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_ST7789.h>
-#include <SPI.h>
-#include <DmxOutput.h>
-#include <pico/critical_section.h>
 #include <atomic>
 #include <cstring>
-#include <EEPROM.h>
+#include <pico/critical_section.h>
 
-// Configurables
-#define DMX_SPEED 30 // In hertz
-constexpr uint16_t MAX_ARTNET_UNIVERSE = 0x7FFF;
-constexpr uint16_t ARTNET_PORT = 6454;
-constexpr size_t ARTNET_PACKET_MAX_SIZE = 530;
-constexpr uint16_t SACN_PORT = 5568;
-constexpr size_t SACN_PACKET_MAX_SIZE = 638;
-constexpr uint32_t CONFIG_MAGIC = 0x444D5831;
-constexpr uint32_t BACKLIGHT_TIMEOUT_MS = 60000;
-constexpr uint32_t ENCODER_HOLD_MS = 650;
+// -----------------------------------------------------------------------------
+// Pin definitions
+// -----------------------------------------------------------------------------
+// Rotary encoder: quadrature A/B inputs and the push switch.
 constexpr uint8_t ENCODER_A = 8;
 constexpr uint8_t ENCODER_B = 9;
 constexpr uint8_t ENCODER_SWITCH = 7;
+
+// Ethernet controller W5500 pins and the two status input pins.
+constexpr uint8_t ETH_MOSI = 31;
+constexpr uint8_t ETH_MISO = 28;
+constexpr uint8_t ETH_SCK = 30;
+constexpr uint8_t ETH_CS = 29;
+constexpr uint8_t LINKLED = 25;
+constexpr uint8_t ACTLED = 26;
+
+// NeoPixel status strip.
+constexpr uint8_t LED_PIN = 21;
+constexpr uint8_t LED_COUNT = 10;
+
+// Four DMX transmitter data and output-enable pins, in output 1-4 order.
+constexpr uint8_t UNIVERSETX[4] = {39, 35, 43, 47};
+constexpr uint8_t UNIVERSEOE[4] = {38, 34, 42, 46};
+
+// ST7789 display pins.
+constexpr uint8_t TFT_CS = 5;
+constexpr uint8_t TFT_MOSI = 3;
+constexpr uint8_t TFT_SCK = 2;
+constexpr uint8_t TFT_RST = 1;
+constexpr uint8_t TFT_DC = 6;
+constexpr uint8_t TFT_BACKLIGHT = 0;
+
+// -----------------------------------------------------------------------------
+// Network and DMX configuration
+// -----------------------------------------------------------------------------
+constexpr uint8_t DMX_SPEED = 30;                 // DMX transmitter rate in Hz.
+constexpr uint16_t UNIVERSE_LENGTH = 512;        // Number of channels in each universe.
+constexpr uint16_t MAX_ARTNET_UNIVERSE = 0x7FFF; // Highest supported Art-Net universe.
+constexpr uint16_t ARTNET_PORT = 6454;           // Standard Art-Net UDP port.
+constexpr size_t ARTNET_PACKET_MAX_SIZE = 530;   // Largest supported Art-Net packet.
+constexpr uint16_t SACN_PORT = 5568;
+constexpr size_t SACN_PACKET_MAX_SIZE = 638;     // Largest supported sACN packet.
+
+// -----------------------------------------------------------------------------
+// Persistent settings and defaults
+// -----------------------------------------------------------------------------
+constexpr uint32_t CONFIG_MAGIC = 0x444D5831;    // Identifies a valid DMXion config block.
+constexpr uint32_t BACKLIGHT_TIMEOUT_MS = 60000; // Default LCD inactivity timeout.
+constexpr uint32_t ENCODER_HOLD_MS = 650;        // Time needed for a hold action.
+constexpr uint32_t ENCODER_FAST_ROTATION_MS = 100; // Gap below which rotary acceleration starts.
+constexpr uint32_t ENCODER_FAST_ROTATION_TIMEOUT_MS = 100;
 constexpr uint8_t DEFAULT_UNIVERSE_TIMEOUT_SECONDS = 10;
 constexpr uint8_t DEFAULT_LED_BRIGHTNESS_PERCENT = 39;
 constexpr uint8_t DEFAULT_LCD_BRIGHTNESS_PERCENT = 100;
 constexpr uint8_t DEFAULT_LCD_TIMEOUT_SECONDS = BACKLIGHT_TIMEOUT_MS / 1000;
-constexpr uint8_t SETTINGS_VERSION = 1;
-constexpr uint8_t SETTINGS_MAIN_OUTPUT = 5;
+constexpr uint8_t DEFAULT_DISABLED_OUTPUT_BRIGHTNESS_PERCENT = 10;
+constexpr uint8_t SETTINGS_VERSION = 3;          // Increases when settings layout changes.
+constexpr uint8_t SETTINGS_MAIN_OUTPUT = 5;      // Virtual menu item in the main UI.
+constexpr uint8_t DMX_LOCK_BYTES = (UNIVERSE_LENGTH + 7) / 8;
 
-
-// Standard definitions
-// Ethernet
-#define ETH_MOSI        31
-#define ETH_MISO        28
-#define ETH_SCK         30
-#define ETH_CS          29
-#define LINKLED         25
-#define ACTLED          26
-// LEDs
-#define LED_PIN         21
-#define LED_COUNT       10
-// DMX
-const int UNIVERSETX[4]   {39, 35, 43, 47};
-const int UNIVERSEOE[4]   {38, 34, 42, 46};
-// Display
-#define TFT_CS          5
-#define TFT_MOSI        3
-#define TFT_SCK         2
-#define TFT_RST         1
-#define TFT_DC          6
-#define TFT_BACKLIGHT   0
-
-// define objects
+// -----------------------------------------------------------------------------
+// Runtime objects and shared state
+// -----------------------------------------------------------------------------
+// The RP2040/RP2350 runs the network task and UI task concurrently. A Pico critical
+// section protects values shared between the two cores and the repeating timers.
 unsigned long last_dmx_packet[4] = {0, 0, 0, 0};
 std::atomic<bool> keep_sending[4] = {true, true, true, true};
 std::atomic<bool> network_ready{false};
@@ -70,11 +90,19 @@ std::atomic<bool> link_led_on{false};
 std::atomic<bool> act_led_on{false};
 std::atomic<bool> ethernet_link_up{false};
 std::atomic<bool> battery_measurement_requested{true};
+std::atomic<int32_t> encoder_transition_count{0};
+uint8_t encoder_previous_ab = 0;
+constexpr int8_t ENCODER_TRANSITIONS[16] = {
+    0, 1, -1, 0, -1, 0, 0, 1,
+    1, 0, 0, -1, 0, -1, 1, 0
+};
 
 repeating_timer_t interval_timer;
 repeating_timer_t charger_timer;
+repeating_timer_t startup_rainbow_timer;
 
-#define UNIVERSE_LENGTH 512
+// pending_universedata contains the start-code byte plus all 512 DMX channels.
+// output_universedata is the copy actually written to the PIO-based DMX output.
 uint8_t pending_universedata[4][UNIVERSE_LENGTH + 1] = {};
 uint8_t output_universedata[4][UNIVERSE_LENGTH + 1] = {};
 uint32_t activity_deadline[4] = {};
@@ -86,6 +114,8 @@ uint8_t enabled_outputs = 0x0F;
 IPAddress configured_ip(192, 168, 2, 212);
 critical_section_t frame_lock;
 
+// EEPROM layout. Keep this structure compact and bump SETTINGS_VERSION when
+// persisted setting fields or meanings change.
 struct StoredConfiguration {
     uint32_t magic;
     uint16_t universes[4];
@@ -98,14 +128,22 @@ struct StoredConfiguration {
     uint8_t lcd_brightness_percent;
     uint8_t lcd_timeout_seconds;
     uint8_t led_color_indices[5];
+    uint8_t charging_led;
+    uint8_t disabled_output_dim_percent;
+    uint8_t dmx_address_lock_bits[4][DMX_LOCK_BYTES];
+    uint8_t dmx_address_value[4][UNIVERSE_LENGTH];
 };
 
+// The main UI and settings views share one screen state machine.
 enum class InterfaceMode : uint8_t {
     SelectOutput,
     EditUniverse,
     EditIp,
     SettingsMenu,
-    EditSetting
+    EditSetting,
+    SourcesMenu,
+    DmxOverrideMenu,
+    DmxViewMenu
 };
 
 InterfaceMode interface_mode = InterfaceMode::SelectOutput;
@@ -118,8 +156,20 @@ uint8_t led_brightness_percent = DEFAULT_LED_BRIGHTNESS_PERCENT;
 uint8_t lcd_brightness_percent = DEFAULT_LCD_BRIGHTNESS_PERCENT;
 uint8_t lcd_timeout_seconds = DEFAULT_LCD_TIMEOUT_SECONDS;
 uint8_t led_color_indices[5] = {0, 3, 5, 7, 7};
+uint8_t charging_led = 0;
+uint8_t disabled_output_dim_percent =
+    DEFAULT_DISABLED_OUTPUT_BRIGHTNESS_PERCENT;
+// One lock bit and one fixed value are kept for every channel of every universe.
+uint8_t dmx_address_locked[4][UNIVERSE_LENGTH] = {};
+uint8_t dmx_address_value[4][UNIVERSE_LENGTH] = {};
+uint8_t dmx_override_universe = 0;
+uint16_t dmx_override_address = 0;
+uint8_t dmx_override_menu_index = 0;
+bool dmx_override_editing = false;
+uint16_t dmx_override_view_scroll = 0;
 uint8_t settings_category = 0;
 uint8_t settings_menu_index = 0;
+uint8_t settings_menu_scroll = 0;
 uint8_t edited_setting_index = 0;
 uint8_t original_setting_value = 0;
 bool settings_root_menu = true;
@@ -133,6 +183,9 @@ float battery_voltage = 0.0f;
 uint8_t battery_percentage = 0;
 bool battery_charge_status_valid = false;
 bool battery_is_charging = false;
+bool startup_rainbow_running = false;
+uint32_t startup_rainbow_last_frame = 0;
+uint8_t startup_rainbow_frame = 0;
 
 DmxOutput universes[4];
 
@@ -143,11 +196,103 @@ EthernetUDP sacn_receivers[4];
 uint16_t sacn_receiver_universes[4] = {};
 bool sacn_receiver_active[4] = {};
 
+constexpr uint8_t SOURCE_ENTRY_COUNT = 12;
+struct SourceEntry {
+    uint32_t ip;
+    uint16_t universe;
+    uint32_t last_seen;
+    uint8_t protocol;
+};
+SourceEntry source_entries[SOURCE_ENTRY_COUNT] = {};
+uint8_t source_menu_index = 0;
+uint8_t source_menu_scroll = 0;
+SourceEntry active_source_entries[SOURCE_ENTRY_COUNT] = {};
+uint8_t active_source_count = 0;
+
+void recordSource(uint8_t protocol, const IPAddress &source_ip,
+                  uint16_t universe) {
+    const uint32_t ip_value = source_ip;
+    if(ip_value == 0) {
+        return;
+    }
+    const uint32_t now = millis();
+    critical_section_enter_blocking(&frame_lock);
+
+    int8_t free_index = -1;
+    int8_t matching_index = -1;
+    for(uint8_t i = 0; i < SOURCE_ENTRY_COUNT; i++) {
+        if(source_entries[i].ip == ip_value &&
+           source_entries[i].protocol == protocol &&
+           source_entries[i].universe == universe) {
+            matching_index = i;
+            break;
+        }
+        if(free_index < 0 && source_entries[i].ip == 0) {
+            free_index = i;
+        }
+    }
+
+    if(matching_index < 0) {
+        matching_index = free_index;
+        if(matching_index < 0) {
+            matching_index = 0;
+            uint32_t oldest_age = 0;
+            for(uint8_t i = 0; i < SOURCE_ENTRY_COUNT; i++) {
+                const uint32_t age = now - source_entries[i].last_seen;
+                if(age >= oldest_age) {
+                    oldest_age = age;
+                    matching_index = i;
+                }
+            }
+        }
+    }
+
+    source_entries[matching_index] = {
+        ip_value, universe, now, protocol
+    };
+    critical_section_exit(&frame_lock);
+}
+
+void refreshActiveSources() {
+    active_source_count = 0;
+    const uint32_t now = millis();
+    critical_section_enter_blocking(&frame_lock);
+    for(uint8_t i = 0; i < SOURCE_ENTRY_COUNT; i++) {
+        const SourceEntry &entry = source_entries[i];
+        if(entry.ip != 0 &&
+           static_cast<uint32_t>(now - entry.last_seen) <= 30000) {
+            active_source_entries[active_source_count++] = entry;
+        }
+    }
+    critical_section_exit(&frame_lock);
+}
+
 byte mac[] = { 0x02, 0x44, 0x4D, 0x58, 0x00, 0x01 };
 IPAddress ip(192, 168, 2, 212);  // Set to an unused address on your Art-Net network
 
-Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
+Adafruit_ST7789 tftHardware = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
+GFXcanvas16 tftCanvas(320, 240);
+Adafruit_GFX &tft = tftCanvas;
 
+void drawFrameToDisplay() {
+    tftHardware.startWrite();
+    tftHardware.drawRGBBitmap(0, 0, tftCanvas.getBuffer(), 320, 240);
+    tftHardware.endWrite();
+}
+
+void drawSettingsButton() {
+    const bool selected = selected_output == SETTINGS_MAIN_OUTPUT;
+    tft.fillRoundRect(250, 28, 65, 20, 3,
+                      selected ? ST77XX_YELLOW : 0x2104);
+    tft.drawRoundRect(250, 28, 65, 20, 3,
+                      selected ? ST77XX_YELLOW : 0x7BEF);
+    tft.setTextSize(1);
+    tft.setTextColor(selected ? ST77XX_BLACK : ST77XX_WHITE);
+    tft.setCursor(258, 35);
+    tft.print(F("SETTINGS"));
+}
+
+// Status LED palette used by the menu and NeoPixel status roles.
 struct StatusColor {
     const char *name;
     uint8_t red;
@@ -184,6 +329,19 @@ void setStatusColor(uint8_t pixel, uint8_t role) {
     strip.setPixelColor(pixel, color.red, color.green, color.blue);
 }
 
+void setStatusColorDimmed(uint8_t pixel, uint8_t role) {
+    const StatusColor &color = STATUS_COLORS[led_color_indices[role]];
+    const uint8_t red = static_cast<uint8_t>((static_cast<uint16_t>(color.red) *
+                                              disabled_output_dim_percent + 50) / 100);
+    const uint8_t green = static_cast<uint8_t>((static_cast<uint16_t>(color.green) *
+                                                disabled_output_dim_percent + 50) / 100);
+    const uint8_t blue = static_cast<uint8_t>((static_cast<uint16_t>(color.blue) *
+                                               disabled_output_dim_percent + 50) / 100);
+    strip.setPixelColor(pixel, red, green, blue);
+}
+
+// Keeps transmitting enabled universes at DMX_SPEED, even after network traffic
+// stops. Locked channels replace the corresponding received channel value.
 bool sendDMX(__unused repeating_timer *rt) {
     for(int i = 0; i < 4; i++) {
         if(keep_sending[i].load(std::memory_order_relaxed) && !universes[i].busy()) {
@@ -191,6 +349,11 @@ bool sendDMX(__unused repeating_timer *rt) {
             const bool enabled = (enabled_outputs & (1u << i)) != 0;
             if(enabled) {
                 std::memcpy(output_universedata[i], pending_universedata[i], sizeof(output_universedata[i]));
+                for(uint16_t address = 0; address < UNIVERSE_LENGTH; address++) {
+                    if(dmx_address_locked[i][address]) {
+                        output_universedata[i][address + 1] = dmx_address_value[i][address];
+                    }
+                }
             }
             critical_section_exit(&frame_lock);
             if(enabled) {
@@ -250,6 +413,8 @@ void updateBatteryMeasurement() {
     }
 }
 
+// Copies received data into the matching output buffers and records packet timing
+// for status LEDs and timeout handling.
 void applyDmxData(uint16_t received_universe, const uint8_t *data, uint16_t size) {
     const uint16_t data_size = size < UNIVERSE_LENGTH ? size : UNIVERSE_LENGTH;
     const uint32_t received_at = millis();
@@ -310,6 +475,7 @@ void receiveArtNetPackets() {
 
         const uint16_t received_universe =
             (static_cast<uint16_t>(packet[15] & 0x7F) << 8) | packet[14];
+        recordSource(0, artnet_receiver.remoteIP(), received_universe);
         applyDmxData(received_universe, packet + 18, data_size);
     }
 }
@@ -331,42 +497,54 @@ bool validSacnPduLength(const uint8_t *packet, size_t packet_size, size_t offset
 }
 
 void onSacnPacket(const uint8_t *packet, size_t packet_size,
-                  uint16_t subscribed_universe) {
-    constexpr size_t root_layer_offset = 16;
-    constexpr size_t framing_layer_offset = 38;
-    constexpr size_t dmp_layer_offset = 115;
+                  uint16_t subscribed_universe,
+                  const IPAddress &source_ip) {
+    constexpr size_t root_vector_offset = 18;
+    constexpr size_t framing_vector_offset = 40;
+    constexpr size_t universe_candidates[][2] = {{112, 113}, {113, 114}};
     constexpr size_t start_code_offset = 125;
 
     if(packet_size < start_code_offset + 1 ||
        packet[0] != 0x00 || packet[1] != 0x10 ||
        packet[2] != 0x00 || packet[3] != 0x00 ||
        std::memcmp(packet + 4, "ASC-E1.17\0\0\0", 12) != 0 ||
-       !validSacnPduLength(packet, packet_size, root_layer_offset) ||
-       readBigEndian32(packet + 18) != 0x00000004 ||
-       !validSacnPduLength(packet, packet_size, framing_layer_offset) ||
-       readBigEndian32(packet + 40) != 0x00000002 ||
-       !validSacnPduLength(packet, packet_size, dmp_layer_offset) ||
-       packet[117] != 0x02 || packet[118] != 0xA1 ||
-       readBigEndian16(packet + 119) != 0 ||
-       readBigEndian16(packet + 121) != 1 ||
-       (packet[112] & 0xC0) != 0 ||
+       readBigEndian32(packet + root_vector_offset) != 0x00000004 ||
+       readBigEndian32(packet + framing_vector_offset) != 0x00000002 ||
        packet[start_code_offset] != 0) {
         return;
     }
 
+    uint16_t sacn_universe = 0;
+    for(uint8_t i = 0; i < 2; i++) {
+        const uint16_t candidate =
+            (static_cast<uint16_t>(packet[universe_candidates[i][0]]) << 8) |
+            packet[universe_candidates[i][1]];
+        if(candidate == subscribed_universe) {
+            sacn_universe = candidate;
+            break;
+        }
+    }
+    if(sacn_universe == 0 || sacn_universe > 63999) {
+        return;
+    }
+
     const uint16_t property_value_count = readBigEndian16(packet + 123);
-    if(property_value_count == 0 || property_value_count > UNIVERSE_LENGTH + 1 ||
+    if(property_value_count == 0 ||
+       property_value_count > UNIVERSE_LENGTH + 1 ||
        packet_size != start_code_offset + property_value_count) {
         return;
     }
 
-    const uint16_t sacn_universe = readBigEndian16(packet + 113);
-    if(sacn_universe == 0 || sacn_universe > 63999 ||
-       sacn_universe != subscribed_universe) {
+    // DMP address/type and vector checks avoid accepting unrelated ACN traffic.
+    if(packet_size >= 119 &&
+       (packet[117] != 0x02 || packet[118] != 0xA1 ||
+        readBigEndian16(packet + 119) != 0 ||
+        readBigEndian16(packet + 121) != 1)) {
         return;
     }
 
     // The device's displayed universe is Art-Net's zero-based universe number.
+    recordSource(1, source_ip, sacn_universe - 1);
     applyDmxData(sacn_universe - 1, packet + start_code_offset + 1,
                  property_value_count - 1);
 }
@@ -428,19 +606,32 @@ void receiveSacnPackets() {
         const int bytes_read = sacn_receivers[i].read(packet, bytes_to_read);
         if(bytes_read > 0) {
             onSacnPacket(packet, static_cast<size_t>(bytes_read),
-                         sacn_receiver_universes[i]);
+                         sacn_receiver_universes[i],
+                         sacn_receivers[i].remoteIP());
         }
     }
 }
 
 void onLED(uint gpio, uint32_t event_mask) {
-    if(gpio == LINKLED) {
+    if(gpio == ENCODER_A || gpio == ENCODER_B) {
+        const uint32_t gpio_state = gpio_get_all();
+        const uint8_t current_ab = static_cast<uint8_t>(
+            (((gpio_state >> ENCODER_A) & 1u) << 1) |
+            ((gpio_state >> ENCODER_B) & 1u));
+        const uint8_t transition =
+            static_cast<uint8_t>((encoder_previous_ab << 2) | current_ab);
+        encoder_transition_count.fetch_add(ENCODER_TRANSITIONS[transition],
+                                           std::memory_order_relaxed);
+        encoder_previous_ab = current_ab;
+    } else if(gpio == LINKLED) {
         link_led_on.store(event_mask == GPIO_IRQ_EDGE_FALL, std::memory_order_relaxed);
     } else if(gpio == ACTLED) {
         act_led_on.store(event_mask == GPIO_IRQ_EDGE_FALL, std::memory_order_relaxed);
     }
 }
 
+// Updates NeoPixel status colors and the LINK/ACT indicators. Red status colors
+// indicate no recent packet data; disabled output LEDs are turned completely off.
 void updateStatusLeds() {
     const uint32_t now = millis();
     uint32_t packet_times[4];
@@ -464,14 +655,19 @@ void updateStatusLeds() {
         const bool has_recent_packet = has_received[i] &&
             static_cast<uint32_t>(now - packet_times[i]) <=
                 static_cast<uint32_t>(universe_timeout_seconds) * 1000;
-        keep_sending[i].store(output_enabled[i] && has_recent_packet, std::memory_order_relaxed);
+        keep_sending[i].store(output_enabled[i], std::memory_order_relaxed);
         if(output_enabled[i]) {
             setStatusColor(7 - 2 * i, has_recent_packet ? 1 : 0);
         } else {
             strip.setPixelColor(7 - 2 * i, 0);
         }
+
         if(packet_activity[i]) {
-            setStatusColor(6 - 2 * i, 2);
+            if(output_enabled[i]) {
+                setStatusColor(6 - 2 * i, 2);
+            } else {
+                setStatusColorDimmed(6 - 2 * i, 2);
+            }
         } else {
             strip.setPixelColor(6 - 2 * i, 0);
         }
@@ -486,7 +682,11 @@ void updateStatusLeds() {
         strip.setPixelColor(8, 0);
     }
     if(act_on) {
-        setStatusColor(9, 4);
+        if(enabled_outputs != 0x0F) {
+            setStatusColorDimmed(9, 4);
+        } else {
+            setStatusColor(9, 4);
+        }
     } else {
         strip.setPixelColor(9, 0);
     }
@@ -513,8 +713,10 @@ bool validStoredSettings(const StoredConfiguration &config) {
        config.lcd_brightness_percent < 10 ||
        config.lcd_brightness_percent > 100 ||
        config.lcd_timeout_seconds == 0 ||
-       config.lcd_timeout_seconds > 60) {
-        return false;
+       config.lcd_timeout_seconds > 60 ||
+       config.charging_led > 2 ||
+       config.disabled_output_dim_percent > 100) {
+       return false;
     }
 
     for(uint8_t i = 0; i < 5; i++) {
@@ -525,6 +727,7 @@ bool validStoredSettings(const StoredConfiguration &config) {
     return true;
 }
 
+// Loads all persisted configuration. Invalid settings leave firmware defaults in place.
 void loadConfiguration() {
     EEPROM.begin(sizeof(StoredConfiguration));
     StoredConfiguration stored{};
@@ -554,6 +757,18 @@ void loadConfiguration() {
         lcd_timeout_seconds = stored.lcd_timeout_seconds;
         std::memcpy(led_color_indices, stored.led_color_indices,
                     sizeof(led_color_indices));
+        charging_led = stored.charging_led;
+        disabled_output_dim_percent =
+            stored.disabled_output_dim_percent;
+        for(uint8_t universe = 0; universe < 4; universe++) {
+            for(uint16_t address = 0; address < UNIVERSE_LENGTH; address++) {
+                dmx_address_locked[universe][address] =
+                    (stored.dmx_address_lock_bits[universe][address >> 3] &
+                     (1u << (address & 7))) != 0;
+            }
+        }
+        std::memcpy(dmx_address_value, stored.dmx_address_value,
+                    sizeof(dmx_address_value));
     }
 }
 
@@ -575,6 +790,20 @@ void saveConfiguration() {
     stored.lcd_timeout_seconds = lcd_timeout_seconds;
     std::memcpy(stored.led_color_indices, led_color_indices,
                 sizeof(led_color_indices));
+    stored.charging_led = charging_led;
+    stored.disabled_output_dim_percent = disabled_output_dim_percent;
+    std::memset(stored.dmx_address_lock_bits, 0,
+                sizeof(stored.dmx_address_lock_bits));
+    for(uint8_t universe = 0; universe < 4; universe++) {
+        for(uint16_t address = 0; address < UNIVERSE_LENGTH; address++) {
+            if(dmx_address_locked[universe][address]) {
+                stored.dmx_address_lock_bits[universe][address >> 3] |=
+                    static_cast<uint8_t>(1u << (address & 7));
+            }
+        }
+    }
+    std::memcpy(stored.dmx_address_value, dmx_address_value,
+                sizeof(dmx_address_value));
 
     EEPROM.put(0, stored);
     configuration_saved = EEPROM.commit();
@@ -626,6 +855,7 @@ void drawNetworkStatus() {
         tft.setTextColor(ST77XX_RED);
         tft.print(F("BATTERY READ ERROR"));
     }
+    drawSettingsButton();
 }
 
 void drawOutputStats(uint8_t output);
@@ -675,18 +905,6 @@ void drawOutputRow(uint8_t output) {
 }
 
 void drawIpRow() {
-    if(selected_output == SETTINGS_MAIN_OUTPUT) {
-        tft.fillRect(5, 218, 310, 20, 0x2104);
-        tft.drawRect(5, 218, 310, 20, ST77XX_YELLOW);
-        tft.setTextSize(1);
-        tft.setTextColor(ST77XX_YELLOW);
-        tft.setCursor(10, 224);
-        tft.print(F("DEVICE SETTINGS"));
-        tft.setCursor(190, 224);
-        tft.print(F("HOLD TO OPEN"));
-        return;
-    }
-
     const bool selected = selected_output == 4;
     const uint16_t background = selected ? 0x2104 : ST77XX_BLACK;
     tft.fillRect(5, 218, 310, 20, background);
@@ -782,8 +1000,8 @@ const char *settingsCategoryName(uint8_t category) {
 uint8_t settingsCategoryItemCount(uint8_t category) {
     switch(category) {
         case 0: return 2;
-        case 1: return 1;
-        case 2: return 6;
+        case 1: return 3;
+        case 2: return 8;
         default: return 2;
     }
 }
@@ -793,7 +1011,9 @@ const char *settingsItemName(uint8_t category, uint8_t item) {
         case 0:
             return item == 0 ? "LCD brightness" : "LCD sleep timeout";
         case 1:
-            return "Universe timeout";
+            if(item == 0) return "Universe timeout";
+            if(item == 1) return "View DMX channels";
+            return "DMX address overrides";
         case 2:
             switch(item) {
                 case 0: return "LED brightness";
@@ -801,7 +1021,9 @@ const char *settingsItemName(uint8_t category, uint8_t item) {
                 case 2: return "Signal color";
                 case 3: return "Packet activity";
                 case 4: return "Ethernet link";
-                default: return "Ethernet activity";
+                case 5: return "Ethernet activity";
+                case 6: return "Charging LED";
+                default: return "Disabled output brightness";
             }
         default:
             return item == 0 ? "Static IP address" : "DHCP";
@@ -815,9 +1037,19 @@ uint8_t getSettingValue() {
                                                 lcd_timeout_seconds;
         case 1:
             return universe_timeout_seconds;
+        case 2:
+            if(edited_setting_index == 0) {
+                return led_brightness_percent;
+            }
+            if(edited_setting_index == 6) {
+                return charging_led;
+            }
+            if(edited_setting_index == 7) {
+                return disabled_output_dim_percent;
+            }
+            return led_color_indices[edited_setting_index - 1];
         default:
-            return edited_setting_index == 0 ? led_brightness_percent :
-                led_color_indices[edited_setting_index - 1];
+            return 0;
     }
 }
 
@@ -834,13 +1066,20 @@ void setSettingValue(uint8_t value) {
         case 1:
             universe_timeout_seconds = value;
             break;
-        default:
+        case 2:
             if(edited_setting_index == 0) {
                 led_brightness_percent = value;
                 applyLedBrightness();
+            } else if(edited_setting_index == 6) {
+                charging_led = value;
+                setChargingLed(charging_led);
+            } else if(edited_setting_index == 7) {
+                disabled_output_dim_percent = value;
             } else {
                 led_color_indices[edited_setting_index - 1] = value;
             }
+            break;
+        default:
             break;
     }
 }
@@ -870,13 +1109,19 @@ void drawSettingsInterface() {
            (settings_category == 2 && edited_setting_index == 0)) {
             tft.print(getSettingValue());
             tft.print(F("%"));
+        } else if(settings_category == 2 && edited_setting_index == 6) {
+            tft.print(charging_led == 0 ? F("LED0 RED") :
+                      charging_led == 1 ? F("LED1 GREEN") : F("LED2 BLUE"));
+        } else if(settings_category == 2 && edited_setting_index == 7) {
+            tft.print(disabled_output_dim_percent);
+            tft.print(F("%"));
         } else if(settings_category == 2) {
             const uint8_t color_index = getSettingValue();
             tft.print(STATUS_COLORS[color_index].name);
             tft.fillRect(10, 126, 48, 28,
-                         tft.color565(STATUS_COLORS[color_index].red,
-                                      STATUS_COLORS[color_index].green,
-                                      STATUS_COLORS[color_index].blue));
+                         tftHardware.color565(STATUS_COLORS[color_index].red,
+                                              STATUS_COLORS[color_index].green,
+                                              STATUS_COLORS[color_index].blue));
         } else {
             tft.print(getSettingValue());
             tft.print(F(" sec"));
@@ -888,10 +1133,24 @@ void drawSettingsInterface() {
         tft.setCursor(10, 208);
         tft.print(F("CLICK SAVE / HOLD CANCEL"));
     } else {
-        const uint8_t item_count = settings_root_menu ? 5 :
+        const uint8_t item_count = settings_root_menu ? 6 :
                                    settingsCategoryItemCount(settings_category) + 1;
-        for(uint8_t item = 0; item < item_count; item++) {
-            const int16_t y = 37 + item * 27;
+        constexpr uint8_t visible_items = 6;
+        if(settings_menu_index < settings_menu_scroll) {
+            settings_menu_scroll = settings_menu_index;
+        } else if(settings_menu_index >= settings_menu_scroll + visible_items) {
+            settings_menu_scroll = settings_menu_index - visible_items + 1;
+        }
+        if(settings_menu_scroll + visible_items > item_count && item_count > visible_items) {
+            settings_menu_scroll = item_count - visible_items;
+        } else if(settings_menu_scroll >= item_count) {
+            settings_menu_scroll = 0;
+        }
+
+        const uint8_t last_item = item_count < settings_menu_scroll + visible_items ?
+                                  item_count : settings_menu_scroll + visible_items;
+        for(uint8_t item = settings_menu_scroll; item < last_item; item++) {
+            const int16_t y = 37 + (item - settings_menu_scroll) * 27;
             const bool selected = item == settings_menu_index;
             if(selected) {
                 tft.fillRect(6, y - 2, 308, 23, 0x2104);
@@ -905,6 +1164,7 @@ void drawSettingsInterface() {
                     case 1: tft.print(F("DMX Outputs")); break;
                     case 2: tft.print(F("Status LEDs")); break;
                     case 3: tft.print(F("Network")); break;
+                    case 4: tft.print(F("Art-Net / sACN Sources")); break;
                     default: tft.print(F("Exit settings")); break;
                 }
             } else if(item == settingsCategoryItemCount(settings_category)) {
@@ -918,17 +1178,25 @@ void drawSettingsInterface() {
                 } else if(settings_category == 0) {
                     tft.print(lcd_timeout_seconds);
                     tft.print(F(" sec"));
-                } else if(settings_category == 1) {
+                } else if(settings_category == 1 && item == 0) {
                     tft.print(universe_timeout_seconds);
                     tft.print(F(" sec"));
+                } else if(settings_category == 1) {
+                    tft.print(F("OPEN"));
                 } else if(settings_category == 2 && item == 0) {
                     tft.print(led_brightness_percent);
                     tft.print(F("%"));
+                } else if(settings_category == 2 && item == 6) {
+                    tft.print(charging_led == 0 ? F("LED0 RED") :
+                              charging_led == 1 ? F("LED1 GREEN") : F("LED2 BLUE"));
+                } else if(settings_category == 2 && item == 7) {
+                    tft.print(disabled_output_dim_percent);
+                    tft.print(F("%"));
                 } else if(settings_category == 2) {
                     const uint8_t color_index = led_color_indices[item - 1];
-                    tft.setTextColor(tft.color565(STATUS_COLORS[color_index].red,
-                                                  STATUS_COLORS[color_index].green,
-                                                  STATUS_COLORS[color_index].blue));
+                    tft.setTextColor(tftHardware.color565(STATUS_COLORS[color_index].red,
+                                                          STATUS_COLORS[color_index].green,
+                                                          STATUS_COLORS[color_index].blue));
                     tft.print(STATUS_COLORS[color_index].name);
                     tft.setTextColor(selected ? ST77XX_YELLOW : ST77XX_WHITE);
                 } else if(item == 0) {
@@ -955,10 +1223,194 @@ void drawSettingsInterface() {
     }
 }
 
+void drawSourcesInterface() {
+    tft.fillScreen(ST77XX_BLACK);
+    tft.setTextSize(2);
+    tft.setTextColor(ST77XX_WHITE);
+    tft.setCursor(8, 7);
+    tft.print(F("ART-NET / sACN SOURCES"));
+    tft.drawFastHLine(5, 29, 310, ST77XX_CYAN);
+    tft.setTextSize(1);
+
+    refreshActiveSources();
+    if(active_source_count == 0) {
+        source_menu_index = 0;
+        source_menu_scroll = 0;
+    } else {
+        if(source_menu_index >= active_source_count) {
+            source_menu_index = active_source_count - 1;
+        }
+        constexpr uint8_t visible_sources = 8;
+        if(source_menu_index < source_menu_scroll) {
+            source_menu_scroll = source_menu_index;
+        } else if(source_menu_index >= source_menu_scroll + visible_sources) {
+            source_menu_scroll = source_menu_index - visible_sources + 1;
+        }
+        if(source_menu_scroll + visible_sources > active_source_count &&
+           active_source_count > visible_sources) {
+            source_menu_scroll = active_source_count - visible_sources;
+        } else if(source_menu_scroll >= active_source_count) {
+            source_menu_scroll = 0;
+        }
+
+        const uint8_t last_source = active_source_count < source_menu_scroll + visible_sources ?
+                                    active_source_count : source_menu_scroll + visible_sources;
+        for(uint8_t i = source_menu_scroll; i < last_source; i++) {
+            const SourceEntry &entry = active_source_entries[i];
+            const int16_t y = 38 + (i - source_menu_scroll) * 22;
+            const bool selected = i == source_menu_index;
+            if(selected) {
+                tft.fillRect(6, y - 2, 308, 20, 0x2104);
+                tft.drawRect(6, y - 2, 308, 20, ST77XX_YELLOW);
+            }
+            tft.setTextColor(selected ? ST77XX_YELLOW : ST77XX_WHITE);
+            tft.setCursor(12, y + 4);
+            tft.print(entry.protocol == 0 ? F("Art-Net  ") : F("sACN     "));
+            tft.print(IPAddress(entry.ip));
+            tft.setCursor(220, y + 4);
+            tft.print(F("U:"));
+            tft.print(entry.universe);
+        }
+    }
+
+    if(active_source_count == 0) {
+        tft.setTextColor(ST77XX_RED);
+        tft.setCursor(12, 44);
+        tft.print(F("No active sources"));
+    }
+
+    tft.setTextColor(ST77XX_CYAN);
+    tft.setCursor(8, 225);
+    tft.print(F("ROTATE VIEW / HOLD BACK"));
+}
+
+// Channel view: 50 channels per page, with live values and lock state.
+void drawDmxViewInterface() {
+    tft.fillScreen(ST77XX_BLACK);
+    tft.setTextSize(2);
+    tft.setTextColor(ST77XX_WHITE);
+    tft.setCursor(8, 7);
+    tft.print(F("DMX UNIVERSE "));
+    tft.print(dmx_override_universe + 1);
+    tft.drawFastHLine(5, 29, 310, ST77XX_CYAN);
+    tft.setTextSize(1);
+
+    const uint32_t now = millis();
+    uint32_t view_last_packet;
+    bool view_received;
+    critical_section_enter_blocking(&frame_lock);
+    view_last_packet = last_dmx_packet[dmx_override_universe];
+    view_received = received_any[dmx_override_universe];
+    uint8_t view_pending[UNIVERSE_LENGTH];
+    for(uint16_t address = 0; address < UNIVERSE_LENGTH; address++) {
+        view_pending[address] = pending_universedata[dmx_override_universe][address + 1];
+    }
+    critical_section_exit(&frame_lock);
+
+    for(uint8_t row = 0; row < 10; row++) {
+        const int16_t y = 36 + row * 18;
+        for(uint8_t column = 0; column < 5; column++) {
+            const uint16_t address = dmx_override_view_scroll + row * 5 + column;
+            if(address >= UNIVERSE_LENGTH) break;
+
+            const int16_t x = 5 + column * 62;
+            const bool locked = dmx_address_locked[dmx_override_universe][address] != 0;
+            const uint32_t age = view_last_packet == 0 ?
+                                 0xFFFFFFFFu : now - view_last_packet;
+            const bool receiving = view_received &&
+                                   age <= static_cast<uint32_t>(universe_timeout_seconds) * 1000;
+            const uint16_t border = locked ? ST77XX_RED :
+                                    (receiving ? ST77XX_GREEN : 0x7BEF);
+
+            tft.fillRect(x, y - 2, 58, 16, ST77XX_BLACK);
+            tft.drawRect(x, y - 2, 58, 16, border);
+            const uint8_t value = locked ?
+                dmx_address_value[dmx_override_universe][address] :
+                view_pending[address];
+            tft.setCursor(x + 3, y + 3);
+            tft.setTextColor(locked ? ST77XX_RED :
+                             (receiving ? ST77XX_GREEN : ST77XX_WHITE));
+            tft.print(address + 1);
+            tft.print(F(" "));
+            tft.print(value);
+        }
+    }
+
+    tft.setTextColor(ST77XX_CYAN);
+    tft.setCursor(8, 225);
+    tft.print(F("ROTATE 50 CH / CLICK UNIVERSE / HOLD BACK"));
+}
+
+// Channel override editor: first select a field, then rotate to edit it.
+void drawDmxOverrideInterface() {
+    tft.fillScreen(ST77XX_BLACK);
+    tft.setTextSize(2);
+    tft.setTextColor(ST77XX_WHITE);
+    tft.setCursor(8, 7);
+    tft.print(F("DMX ADDRESS OVERRIDE"));
+    tft.drawFastHLine(5, 29, 310, ST77XX_CYAN);
+    tft.setTextSize(1);
+
+    const char *labels[] = {"Universe", "Address", "Lock", "Value"};
+    for(uint8_t row = 0; row < 4; row++) {
+        const int16_t y = 38 + row * 36;
+        const bool selected = dmx_override_menu_index == row;
+        const bool editing = selected && dmx_override_editing;
+        if(selected) {
+            tft.fillRect(6, y - 4, 308, 34,
+                         editing ? ST77XX_YELLOW : 0x2104);
+            tft.drawRect(6, y - 4, 308, 34,
+                         editing ? ST77XX_WHITE : ST77XX_YELLOW);
+        }
+        tft.setTextColor(editing ? ST77XX_BLACK :
+                         (selected ? ST77XX_YELLOW : ST77XX_CYAN));
+        tft.setCursor(12, y);
+        tft.print(labels[row]);
+        tft.setTextSize(2);
+        tft.setCursor(12, y + 14);
+        tft.setTextColor(editing ? ST77XX_BLACK :
+                         (selected ? ST77XX_YELLOW : ST77XX_WHITE));
+        if(row == 0) {
+            tft.print(dmx_override_universe + 1);
+        } else if(row == 1) {
+            tft.print(dmx_override_address + 1);
+        } else if(row == 2) {
+            tft.print(dmx_address_locked[dmx_override_universe][dmx_override_address] ?
+                      F("ON") : F("OFF"));
+        } else {
+            tft.print(dmx_address_value[dmx_override_universe][dmx_override_address]);
+        }
+        tft.setTextSize(1);
+    }
+
+    tft.setTextColor(ST77XX_CYAN);
+    tft.setCursor(8, 225);
+    tft.print(dmx_override_editing ? F("ROTATE CHANGE / CLICK APPLY / HOLD BACK") :
+                                      F("ROTATE SELECT / CLICK EDIT / HOLD BACK"));
+}
+
+// drawInterface redraws the logical 320x240 canvas, then copies the completed
+// frame to the physical ST7789. This avoids visible partial or flickering updates.
 void drawInterface(bool redraw_all) {
+    if(interface_mode == InterfaceMode::DmxViewMenu) {
+        drawDmxViewInterface();
+        drawFrameToDisplay();
+        return;
+    }
+    if(interface_mode == InterfaceMode::DmxOverrideMenu) {
+        drawDmxOverrideInterface();
+        drawFrameToDisplay();
+        return;
+    }
+    if(interface_mode == InterfaceMode::SourcesMenu) {
+        drawSourcesInterface();
+        drawFrameToDisplay();
+        return;
+    }
     if(interface_mode == InterfaceMode::SettingsMenu ||
        interface_mode == InterfaceMode::EditSetting) {
         drawSettingsInterface();
+        drawFrameToDisplay();
         return;
     }
 
@@ -973,16 +1425,19 @@ void drawInterface(bool redraw_all) {
     tft.setCursor(8, 7);
     tft.print(F("DMXion Node"));
     tft.setTextSize(1);
-    tft.setCursor(190, 12);
+    tft.setCursor(162, 12);
     if(interface_mode == InterfaceMode::EditIp) {
         tft.print(F("CLICK NEXT / HOLD SAVE"));
     } else if(interface_mode == InterfaceMode::EditUniverse) {
-        tft.print(F("CLICK: SAVE DMX U"));
+        tft.print(F("CLICK SAVE DMX U"));
     } else if(selected_output == SETTINGS_MAIN_OUTPUT) {
-        tft.print(F("HOLD: DEVICE SETTINGS"));
+        tft.print(F("CLICK OPEN SETTINGS"));
+    } else if(selected_output == 4) {
+        tft.print(F("CLICK DHCP / HOLD IP"));
     } else {
-        tft.print(selected_output == 4 ? F("CLICK DHCP / HOLD IP") : F("HOLD: EDIT DMX U"));
+        tft.print(F("HOLD: EDIT DMX U"));
     }
+
     tft.drawFastHLine(5, 23, 310, ST77XX_CYAN);
 
     drawNetworkStatus();
@@ -990,6 +1445,7 @@ void drawInterface(bool redraw_all) {
         drawOutputRow(i);
     }
     drawIpRow();
+    drawFrameToDisplay();
 }
 
 void recordUserActivity() {
@@ -1001,40 +1457,106 @@ void recordUserActivity() {
     }
 }
 
-void adjustSettingValue(int8_t direction);
+void adjustSettingValue(int32_t delta);
 
-void handleEncoderRotation(int8_t direction) {
+void handleEncoderRotation(int32_t delta) {
     recordUserActivity();
     if(interface_mode == InterfaceMode::EditUniverse) {
-        if(direction > 0) {
-            edited_universe = edited_universe == MAX_ARTNET_UNIVERSE ? 0 : edited_universe + 1;
-        } else {
-            edited_universe = edited_universe == 0 ? MAX_ARTNET_UNIVERSE : edited_universe - 1;
+        const int32_t universe_count =
+            static_cast<int32_t>(MAX_ARTNET_UNIVERSE) + 1;
+        int32_t universe =
+            (static_cast<int32_t>(edited_universe) + delta) % universe_count;
+        if(universe < 0) {
+            universe += universe_count;
         }
+        edited_universe = static_cast<uint16_t>(universe);
         drawOutputRow(selected_output);
         return;
     }
     if(interface_mode == InterfaceMode::EditIp) {
-        edited_ip[edited_ip_octet] = static_cast<uint8_t>(edited_ip[edited_ip_octet] + direction);
+        edited_ip[edited_ip_octet] = static_cast<uint8_t>(
+            edited_ip[edited_ip_octet] + delta);
         drawIpRow();
         return;
     }
     if(interface_mode == InterfaceMode::EditSetting) {
-        adjustSettingValue(direction);
+        adjustSettingValue(delta);
         drawInterface(false);
         return;
     }
+    if(interface_mode == InterfaceMode::DmxViewMenu) {
+        int32_t view = static_cast<int32_t>(dmx_override_view_scroll) + delta * 50;
+        if(view < 0) view = 0;
+        if(view > UNIVERSE_LENGTH - 50) view = UNIVERSE_LENGTH - 50;
+        dmx_override_view_scroll = static_cast<uint16_t>(view);
+        drawInterface(true);
+        return;
+    }
+    if(interface_mode == InterfaceMode::DmxOverrideMenu) {
+        if(!dmx_override_editing) {
+            int32_t row = (static_cast<int32_t>(dmx_override_menu_index) + delta) % 4;
+            if(row < 0) row += 4;
+            dmx_override_menu_index = static_cast<uint8_t>(row);
+        } else {
+            int32_t value;
+            switch(dmx_override_menu_index) {
+                case 0:
+                    value = (static_cast<int32_t>(dmx_override_universe) + delta) % 4;
+                    if(value < 0) value += 4;
+                    dmx_override_universe = static_cast<uint8_t>(value);
+                    break;
+                case 1:
+                    value = (static_cast<int32_t>(dmx_override_address) + delta) % UNIVERSE_LENGTH;
+                    if(value < 0) value += UNIVERSE_LENGTH;
+                    dmx_override_address = static_cast<uint16_t>(value);
+                    break;
+                case 3:
+                    value = static_cast<int32_t>(dmx_address_value[dmx_override_universe][dmx_override_address]) + delta;
+                    if(value < 0) value = 0;
+                    if(value > 255) value = 255;
+                    dmx_address_value[dmx_override_universe][dmx_override_address] = static_cast<uint8_t>(value);
+                    break;
+                case 2:
+                    break;
+            }
+        }
+        drawInterface(true);
+        return;
+    }
+    if(interface_mode == InterfaceMode::SourcesMenu) {
+        refreshActiveSources();
+        if(active_source_count == 0) {
+            source_menu_index = 0;
+            source_menu_scroll = 0;
+        } else {
+            int32_t index = (static_cast<int32_t>(source_menu_index) + delta) %
+                            active_source_count;
+            if(index < 0) {
+                index += active_source_count;
+            }
+            source_menu_index = static_cast<uint8_t>(index);
+        }
+        drawInterface(true);
+        return;
+    }
     if(interface_mode == InterfaceMode::SettingsMenu) {
-        const uint8_t item_count = settings_root_menu ? 5 :
+        const uint8_t item_count = settings_root_menu ? 6 :
                                    settingsCategoryItemCount(settings_category) + 1;
-        settings_menu_index = static_cast<uint8_t>(
-            (settings_menu_index + item_count + direction) % item_count);
+        int32_t index = (static_cast<int32_t>(settings_menu_index) + delta) %
+                        item_count;
+        if(index < 0) {
+            index += item_count;
+        }
+        settings_menu_index = static_cast<uint8_t>(index);
         drawInterface(false);
         return;
     }
 
-    selected_output = static_cast<uint8_t>(
-        (selected_output + 6 + direction) % 6);
+    int32_t output = (static_cast<int32_t>(selected_output) + delta) % 6;
+    if(output < 0) {
+        output += 6;
+    }
+    selected_output = static_cast<uint8_t>(output);
     drawInterface(false);
 }
 
@@ -1055,7 +1577,8 @@ void saveEditedUniverse() {
     last_dmx_packet[selected_output] = 0;
     received_packets[selected_output] = 0;
     received_any[selected_output] = false;
-    keep_sending[selected_output].store(false, std::memory_order_relaxed);
+    keep_sending[selected_output].store((enabled_outputs & (1u << selected_output)) != 0,
+                                       std::memory_order_relaxed);
     critical_section_exit(&frame_lock);
     interface_mode = InterfaceMode::SelectOutput;
     saveConfiguration();
@@ -1132,6 +1655,7 @@ void saveEditedIp() {
 void enterSettings() {
     settings_root_menu = true;
     settings_menu_index = 0;
+    settings_menu_scroll = 0;
     interface_mode = InterfaceMode::SettingsMenu;
     drawInterface(true);
 }
@@ -1145,6 +1669,7 @@ void exitSettings() {
 void openSettingsCategory(uint8_t category) {
     settings_category = category;
     settings_menu_index = 0;
+    settings_menu_scroll = 0;
     settings_root_menu = false;
     drawInterface(true);
 }
@@ -1153,6 +1678,11 @@ void selectSettingsMenuItem() {
     if(settings_root_menu) {
         if(settings_menu_index < 4) {
             openSettingsCategory(settings_menu_index);
+        } else if(settings_menu_index == 4) {
+            source_menu_index = 0;
+            source_menu_scroll = 0;
+            interface_mode = InterfaceMode::SourcesMenu;
+            drawInterface(true);
         } else {
             exitSettings();
         }
@@ -1163,10 +1693,27 @@ void selectSettingsMenuItem() {
     if(settings_menu_index == item_count) {
         settings_root_menu = true;
         settings_menu_index = settings_category;
+        settings_menu_scroll = 0;
         drawInterface(true);
         return;
     }
 
+    if(settings_category == 1 && settings_menu_index == 1) {
+        dmx_override_universe = 0;
+        dmx_override_view_scroll = 0;
+        interface_mode = InterfaceMode::DmxViewMenu;
+        drawInterface(true);
+        return;
+    }
+    if(settings_category == 1 && settings_menu_index == 2) {
+        dmx_override_universe = 0;
+        dmx_override_address = 0;
+        dmx_override_menu_index = 0;
+        dmx_override_editing = false;
+        interface_mode = InterfaceMode::DmxOverrideMenu;
+        drawInterface(true);
+        return;
+    }
     if(settings_category == 3 && settings_menu_index == 1) {
         toggleDhcp();
         return;
@@ -1190,22 +1737,34 @@ void selectSettingsMenuItem() {
     drawInterface(true);
 }
 
-void adjustSettingValue(int8_t direction) {
+void adjustSettingValue(int32_t delta) {
     uint8_t value = getSettingValue();
-    if(settings_category == 2 && edited_setting_index > 0) {
-        value = static_cast<uint8_t>((value + STATUS_COLOR_COUNT + direction) %
-                                     STATUS_COLOR_COUNT);
+    if(settings_category == 2 && edited_setting_index > 0 &&
+       edited_setting_index < 6) {
+        int32_t color = (static_cast<int32_t>(value) + delta) %
+                        STATUS_COLOR_COUNT;
+        if(color < 0) {
+            color += STATUS_COLOR_COUNT;
+        }
+        value = static_cast<uint8_t>(color);
     } else {
         const uint8_t minimum =
-            settings_category == 0 && edited_setting_index == 0 ? 10 :
-            (settings_category == 2 && edited_setting_index == 0 ? 0 : 1);
+            settings_category == 2 &&
+            (edited_setting_index == 6 || edited_setting_index == 7) ? 0 :
+            (settings_category == 0 && edited_setting_index == 0 ? 10 :
+            (settings_category == 2 && edited_setting_index == 0 ? 0 : 1));
         const uint8_t maximum =
-            settings_category == 0 && edited_setting_index == 0 ? 100 :
-            (settings_category == 2 ? 100 : 60);
-        if(direction > 0 && value < maximum) {
-            value++;
-        } else if(direction < 0 && value > minimum) {
-            value--;
+            settings_category == 2 && edited_setting_index == 6 ? 2 :
+            (settings_category == 2 && edited_setting_index == 7 ? 100 :
+            (settings_category == 0 && edited_setting_index == 0 ? 100 :
+            (settings_category == 2 ? 100 : 60)));
+        const int32_t adjusted_value = static_cast<int32_t>(value) + delta;
+        if(adjusted_value < minimum) {
+            value = minimum;
+        } else if(adjusted_value > maximum) {
+            value = maximum;
+        } else {
+            value = static_cast<uint8_t>(adjusted_value);
         }
     }
     setSettingValue(value);
@@ -1224,35 +1783,60 @@ void finishSettingEdit(bool save) {
     drawInterface(true);
 }
 
+// Polls the rotary encoder and button. Short clicks navigate/select, while a
+// 650 ms hold performs mode-specific back or cancel actions.
 void handleEncoder() {
-    static constexpr int8_t transitions[16] = {
-        0, 1, -1, 0, -1, 0, 0, 1,
-        1, 0, 0, -1, 0, -1, 1, 0
-    };
-    static uint8_t previous_ab = 0;
-    static int8_t encoder_steps = 0;
-    static bool encoder_initialized = false;
+    static int32_t encoder_steps = 0;
     static bool raw_button_state = HIGH;
     static bool stable_button_state = HIGH;
     static InterfaceMode button_mode_at_press = InterfaceMode::SelectOutput;
     static bool long_press_entered_edit = false;
     static uint32_t raw_state_changed_at = 0;
     static uint32_t button_pressed_at = 0;
+    static uint32_t last_rotation_ms = 0;
+    static uint8_t fast_rotation_count = 0;
 
-    const uint8_t current_ab = (digitalRead(ENCODER_A) << 1) | digitalRead(ENCODER_B);
-    if(!encoder_initialized) {
-        previous_ab = current_ab;
-        encoder_initialized = true;
-    } else {
-        encoder_steps += transitions[(previous_ab << 2) | current_ab];
-        previous_ab = current_ab;
-        if(encoder_steps >= 2) {
-            handleEncoderRotation(-1);
-            encoder_steps = 0;
-        } else if(encoder_steps <= -2) {
-            handleEncoderRotation(1);
-            encoder_steps = 0;
+    encoder_steps += encoder_transition_count.exchange(0, std::memory_order_relaxed);
+    const int32_t completed_steps = encoder_steps / 2;
+    encoder_steps %= 2;
+    if(completed_steps != 0) {
+        int32_t accelerated_steps = completed_steps;
+
+        if(interface_mode == InterfaceMode::DmxOverrideMenu && dmx_override_editing) {
+            const uint32_t rotation_ms = millis();
+            const uint32_t gap = rotation_ms - last_rotation_ms;
+            if(last_rotation_ms == 0 || gap >= ENCODER_FAST_ROTATION_TIMEOUT_MS) {
+                fast_rotation_count = 0;
+            }
+
+            const int32_t step_magnitude = completed_steps < 0 ?
+                                           -completed_steps : completed_steps;
+            if(gap < ENCODER_FAST_ROTATION_MS) {
+                fast_rotation_count++;
+            } else {
+                fast_rotation_count = 0;
+            }
+
+            int32_t multiplier = 1;
+            if(step_magnitude >= 8) {
+                multiplier = 20;
+            } else if(step_magnitude >= 4) {
+                multiplier = 10;
+            } else if(step_magnitude >= 2) {
+                multiplier = 5;
+            } else if(fast_rotation_count >= 2 && gap < ENCODER_FAST_ROTATION_MS) {
+                multiplier = 3;
+            }
+
+            accelerated_steps = completed_steps * multiplier;
+            last_rotation_ms = rotation_ms;
+        } else {
+            last_rotation_ms = 0;
+            fast_rotation_count = 0;
         }
+
+        // Preserve the encoder's existing direction correction.
+        handleEncoderRotation(-accelerated_steps);
     }
 
     const uint32_t now = millis();
@@ -1281,6 +1865,25 @@ void handleEncoder() {
             } else if(button_mode_at_press == InterfaceMode::EditSetting &&
                       !long_press_entered_edit) {
                 finishSettingEdit(true);
+            } else if(button_mode_at_press == InterfaceMode::DmxViewMenu &&
+                      !long_press_entered_edit) {
+                dmx_override_universe = (dmx_override_universe + 1) % 4;
+                dmx_override_view_scroll = 0;
+                drawInterface(true);
+            } else if(button_mode_at_press == InterfaceMode::DmxOverrideMenu &&
+                      !long_press_entered_edit) {
+                if(dmx_override_menu_index == 2) {
+                    dmx_address_locked[dmx_override_universe][dmx_override_address] =
+                        dmx_address_locked[dmx_override_universe][dmx_override_address] ? 0 : 1;
+                    dmx_override_editing = false;
+                    saveConfiguration();
+                } else if(!dmx_override_editing) {
+                    dmx_override_editing = true;
+                } else {
+                    dmx_override_editing = false;
+                    saveConfiguration();
+                }
+                drawInterface(true);
             } else if(button_mode_at_press == InterfaceMode::SettingsMenu &&
                       !long_press_entered_edit) {
                 selectSettingsMenuItem();
@@ -1288,7 +1891,7 @@ void handleEncoder() {
                 if(selected_output == 4) {
                     toggleDhcp();
                 } else if(selected_output == SETTINGS_MAIN_OUTPUT) {
-                    // Settings are opened by a long press.
+                    enterSettings();
                 } else {
                     toggleSelectedOutput();
                 }
@@ -1306,6 +1909,34 @@ void handleEncoder() {
         }
         if(button_mode_at_press == InterfaceMode::EditSetting) {
             finishSettingEdit(false);
+            return;
+        }
+        if(button_mode_at_press == InterfaceMode::DmxViewMenu) {
+            interface_mode = InterfaceMode::SettingsMenu;
+            settings_root_menu = false;
+            settings_category = 1;
+            settings_menu_index = 1;
+            settings_menu_scroll = 0;
+            drawInterface(true);
+            return;
+        }
+        if(button_mode_at_press == InterfaceMode::DmxOverrideMenu) {
+            saveConfiguration();
+            dmx_override_editing = false;
+            interface_mode = InterfaceMode::SettingsMenu;
+            settings_root_menu = false;
+            settings_category = 1;
+            settings_menu_index = 2;
+            settings_menu_scroll = 0;
+            drawInterface(true);
+            return;
+        }
+        if(button_mode_at_press == InterfaceMode::SourcesMenu) {
+            interface_mode = InterfaceMode::SettingsMenu;
+            settings_root_menu = true;
+            settings_menu_index = 4;
+            settings_menu_scroll = 0;
+            drawInterface(true);
             return;
         }
         if(button_mode_at_press == InterfaceMode::SettingsMenu) {
@@ -1351,24 +1982,49 @@ void updateBacklight() {
     }
 }
 
-void playStartupRainbow() {
-    constexpr uint8_t frames = 120;
-    constexpr uint16_t frame_delay_ms = 20;
-
-    for(uint8_t frame = 0; frame < frames; frame++) {
-        for(uint8_t pixel = 0; pixel < LED_COUNT; pixel++) {
-            const uint16_t hue = static_cast<uint16_t>(
-                (static_cast<uint32_t>(frame) * 65536 / frames) +
-                (static_cast<uint32_t>(pixel) * 65536 / LED_COUNT));
-            strip.setPixelColor(pixel, strip.ColorHSV(hue, 255, 100));
-        }
-        strip.show();
-        delay(frame_delay_ms);
+void updateStartupRainbow() {
+    if(!startup_rainbow_running) {
+        return;
     }
+
+    const uint32_t now = millis();
+    if(static_cast<uint32_t>(now - startup_rainbow_last_frame) < 20) {
+        return;
+    }
+
+    for(uint8_t pixel = 0; pixel < LED_COUNT; pixel++) {
+        const uint16_t hue = static_cast<uint16_t>(
+            (static_cast<uint32_t>(startup_rainbow_frame) * 65536 / 120) +
+            (static_cast<uint32_t>(pixel) * 65536 / LED_COUNT));
+        strip.setPixelColor(pixel, strip.ColorHSV(hue, 255, 100));
+    }
+    strip.show();
+    startup_rainbow_frame++;
+    startup_rainbow_last_frame = now;
+}
+
+bool updateStartupRainbowTimer(repeating_timer_t *) {
+    updateStartupRainbow();
+    return true;
+}
+
+void startStartupRainbow() {
+    startup_rainbow_running = true;
+    startup_rainbow_frame = 0;
+    startup_rainbow_last_frame = millis();
+    add_repeating_timer_ms(-20, updateStartupRainbowTimer, nullptr,
+                           &startup_rainbow_timer);
+}
+
+void stopStartupRainbow() {
+    startup_rainbow_running = false;
+    cancel_repeating_timer(&startup_rainbow_timer);
     strip.clear();
     strip.show();
 }
 
+// Arduino setup runs once. It initializes hardware, network services, DMX output,
+// the display, and starts background timers.
 void setup() {
     Serial.begin(115200);
     critical_section_init(&frame_lock);
@@ -1376,13 +2032,19 @@ void setup() {
     pinMode(ENCODER_A, INPUT_PULLUP);
     pinMode(ENCODER_B, INPUT_PULLUP);
     pinMode(ENCODER_SWITCH, INPUT_PULLUP);
+    encoder_previous_ab = static_cast<uint8_t>(
+        (gpio_get(ENCODER_A) << 1) | gpio_get(ENCODER_B));
     last_user_activity = millis();
+
+    strip.begin();
+    applyLedBrightness();
+    startStartupRainbow();
 
     // Give time to open the serial monitor
     delay(1000);
 
     // Start the charger
-    if(!chargerStart(McciCatenaNpm1300::cNPM1300::Ntc::NotFitted, McciCatenaNpm1300::cNPM1300::Vterm::V4_20, McciCatenaNpm1300::cNPM1300::Current::MA_1500, 800)) {
+    if(!chargerStart(McciCatenaNpm1300::cNPM1300::Ntc::NotFitted, McciCatenaNpm1300::cNPM1300::Vterm::V4_20, McciCatenaNpm1300::cNPM1300::Current::MA_1500, 800, charging_led)) {
         while(1) {
             Serial.println("Charger init failed");
             delay(20);
@@ -1392,9 +2054,7 @@ void setup() {
     }
     add_repeating_timer_ms(-5000, sendChargerData, NULL, &charger_timer);
 
-    // Configure the LEDs
-    strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
-    applyLedBrightness();
+    // Configure the LEDs (started above; keep the rainbow running throughout setup)
     // Configure the display
     delay(500);
     SPI.setCS(TFT_CS);
@@ -1402,9 +2062,10 @@ void setup() {
     SPI.setSCK(TFT_SCK);
     pinMode(TFT_BACKLIGHT, OUTPUT);
     analogWrite(TFT_BACKLIGHT, 0);
-    tft.init(240, 320);
-    tft.setRotation(3);
-    tft.fillScreen(ST77XX_BLACK);
+    tftHardware.init(240, 320);
+    tftHardware.setRotation(3);
+    tftCanvas.fillScreen(ST77XX_BLACK);
+    drawFrameToDisplay();
     backlight_is_on = true;
     applyLcdBrightness();
 
@@ -1427,6 +2088,8 @@ void setup() {
     gpio_set_irq_enabled_with_callback(LINKLED, GPIO_IRQ_EDGE_FALL, true, onLED);
     gpio_set_irq_enabled_with_callback(ACTLED, GPIO_IRQ_EDGE_RISE, true, onLED);
     gpio_set_irq_enabled_with_callback(ACTLED, GPIO_IRQ_EDGE_FALL, true, onLED);
+    gpio_set_irq_enabled(ENCODER_A, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
+    gpio_set_irq_enabled(ENCODER_B, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
     link_led_on.store(gpio_get(LINKLED) == 0, std::memory_order_relaxed);
     act_led_on.store(gpio_get(ACTLED) == 0, std::memory_order_relaxed);
     SPI1.setCS(ETH_CS);
@@ -1462,31 +2125,51 @@ void setup() {
         network_ready.store(true, std::memory_order_release);
     }
 
-    playStartupRainbow();
+    updateStartupRainbow();
     drawInterface(true);
+    stopStartupRainbow();
 }
 
+// Arduino core loop: UI input, backlight, battery, NeoPixels, and screen updates.
 void loop() {
     handleEncoder();
+
     updateBacklight();
     updateBatteryMeasurement();
-    updateStatusLeds();
-    strip.show();
+    if(!startup_rainbow_running) {
+        updateStatusLeds();
+        strip.show();
+    }
 
     const uint32_t now = millis();
+    if(backlight_is_on && interface_mode == InterfaceMode::SourcesMenu &&
+       static_cast<uint32_t>(now - last_interface_stats_update) >= 500) {
+        drawInterface(true);
+        last_interface_stats_update = now;
+    }
+    if(backlight_is_on && interface_mode == InterfaceMode::DmxViewMenu &&
+       static_cast<uint32_t>(now - last_interface_stats_update) >= 500) {
+        drawInterface(true);
+        last_interface_stats_update = now;
+    }
     if(backlight_is_on &&
        interface_mode != InterfaceMode::SettingsMenu &&
        interface_mode != InterfaceMode::EditSetting &&
+       interface_mode != InterfaceMode::SourcesMenu &&
+       interface_mode != InterfaceMode::DmxOverrideMenu &&
+       interface_mode != InterfaceMode::DmxViewMenu &&
        static_cast<uint32_t>(now - last_interface_stats_update) >= 500) {
         drawNetworkStatus();
         drawIpRow();
         for(uint8_t i = 0; i < 4; i++) {
             drawOutputStats(i);
         }
+        drawFrameToDisplay();
         last_interface_stats_update = now;
     }
 }
 
+// Second-core loop: Ethernet maintenance and Art-Net/sACN packet reception.
 void loop1() {
     static uint32_t last_dhcp_maintain = 0;
     static uint32_t last_dhcp_attempt = 0;

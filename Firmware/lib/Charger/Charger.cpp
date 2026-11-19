@@ -10,7 +10,28 @@ using namespace McciCatenaNpm1300;
 McciCatenaNpm1300::cNPM1300 gNpm1300{Wire1};
 
 // Initializes the charger and sets different settings as specified
-bool chargerStart(McciCatenaNpm1300::cNPM1300::Ntc ntc_fitted, McciCatenaNpm1300::cNPM1300::Vterm charge_voltage, McciCatenaNpm1300::cNPM1300::Current max_current, int charge_current) {
+bool setChargingLed(uint8_t charging_led) {
+    if(charging_led > 2) {
+        return false;
+    }
+
+    const cNPM1300::Led leds[3] = {
+        cNPM1300::Led::LED_0,
+        cNPM1300::Led::LED_1,
+        cNPM1300::Led::LED_2
+    };
+
+    for(uint8_t i = 0; i < 3; i++) {
+        const cNPM1300::LedMode mode = i == charging_led ?
+            cNPM1300::LedMode::Charging : cNPM1300::LedMode::NotUsed;
+        if(!gNpm1300.ledSetMode(leds[i], mode)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool chargerStart(McciCatenaNpm1300::cNPM1300::Ntc ntc_fitted, McciCatenaNpm1300::cNPM1300::Vterm charge_voltage, McciCatenaNpm1300::cNPM1300::Current max_current, int charge_current, uint8_t charging_led) {
 
     // Setup the I2C line
     Wire1.setSCL(23);
@@ -27,9 +48,7 @@ bool chargerStart(McciCatenaNpm1300::cNPM1300::Ntc ntc_fitted, McciCatenaNpm1300
         !gNpm1300.setBuckVoltage_2(McciCatenaNpm1300::cNPM1300::Voltage::V3_30) ||
         !gNpm1300.setBuck_2(true) ||
         !gNpm1300.setBuck_1(false) ||
-        !gNpm1300.ledSetMode(McciCatenaNpm1300::cNPM1300::Led::LED_0, McciCatenaNpm1300::cNPM1300::LedMode::Charging) ||
-        !gNpm1300.ledSetMode(McciCatenaNpm1300::cNPM1300::Led::LED_1, McciCatenaNpm1300::cNPM1300::LedMode::Error) ||
-        !gNpm1300.ledSetMode(McciCatenaNpm1300::cNPM1300::Led::LED_2, McciCatenaNpm1300::cNPM1300::LedMode::Host) ||
+        !setChargingLed(charging_led) ||
         !gNpm1300.setChargeCurrent(charge_current) ||
         !gNpm1300.chargerOn()
     ) {

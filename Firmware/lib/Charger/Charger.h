@@ -6,8 +6,10 @@ bool chargerStart(
     McciCatenaNpm1300::cNPM1300::Ntc ntc_fitted,
     McciCatenaNpm1300::cNPM1300::Vterm charge_voltage,
     McciCatenaNpm1300::cNPM1300::Current max_current,
-    int charge_current
+    int charge_current,
+    uint8_t charging_led
 );
 
+bool setChargingLed(uint8_t charging_led);
 bool getVbat(float &voltage);
 bool getChargeStatus(uint8_t &status);
